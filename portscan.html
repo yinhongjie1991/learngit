@@ -1,0 +1,756 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="layui/css/layui.css">
+<link rel="stylesheet" href="css/style.css">
+<title>端口扫描</title>
+</head>
+<style>
+    .left{
+        width: 50%;
+        float: left;
+    }
+    .clean{
+        clear: both;
+    }
+    .center{
+        text-align: center;
+    }
+    .layui-form-select dl dd.layui-this{
+        background-color: #132240;
+        color: #adb5cc;
+    }
+    .layui-form-select .layui-input{
+        background: transparent;
+        border-color: transparent;
+        border-radius: 4px;
+        color: #adb5cc;
+    }
+    .layui-input:hover, .layui-textarea:hover{
+        border-color: transparent!important;
+        color: #adb5cc;
+    }
+    .pop_bp .ipt_txt,.pop_bp .tit{
+        line-height: 38px;
+    }
+    .layui-form-select dl dd.layui-this{
+        background-color: #132240;
+    }
+    .layui-input, .layui-textarea, .layui-select{
+        background-color: #132240;
+        border-color: #485679;
+        border:0;
+        color: #7D8AB2;
+    }
+</style>
+
+<body class="layui-layout-body">
+<div class="layui-layout layui-layout-admin">
+    <div class="layui-header">
+
+    </div>
+
+    <div class="layui-side">
+        <div class="layui-side-scroll">
+
+        </div>
+    </div>
+    <div class="layui-body">
+        <div class="container">
+            <div class="pub_tit">
+                <span class="tit">端口扫描</span>
+            </div>
+            <div class="user_main">
+                <div class="pub_topbar clearfix">
+                    <div class="pub_search fl">
+                        <input type="text" class="ipt ipt_txt find_key" id="find_key" placeholder="输入端口id进行搜索" />
+                    </div>
+                    <button class="btn fr mt8 addDkz" onclick="addnew()">添加</button>
+                </div>
+                <div class="pub_tablew">
+                    <table class="pub_table" id="tab">
+                        <thead>
+                        <th>
+                            <input type="checkbox" name="" lay-skin="primary" lay-filter="allChoose">
+                        </th>
+                        <th>ID</th>
+                        <th>创建时间</th>
+                        <th>快速扫描</th>
+                        <th>主机组IP</th>
+                        <th>主机组ID</th>
+                        <th>标签名</th>
+                        <th>循环次数</th>
+                        <th>目标端口</th>
+                        <th>端口组id</th>
+                        <th>延时时间</th>
+                        <th>扫描服务</th>
+                        <th>线程数</th>
+                        <th>扫描udp</th>
+                        <th>延时类型</th>
+                        <th>操作</th>
+                        </thead>
+                        <tbody id="content">
+                        </tbody>
+                    </table>
+                </div>
+                <div class="pagelist">
+                    <span class="fz"></span>
+                    <div class="pages fr">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--添加端口扫描-->
+<div class="pop_bg"></div>
+<div class="pop pop_bp layui-form pop_bpDkz" style="overflow: auto;position: absolute;height: 470px;">
+    <h6 class="p_tit" style="position: fixed;width: 640px;">添加端口扫描 <em class="close fr"></em></h6>
+    <div class="detail" style="padding-top: 30px;">
+        <div class="item left">
+            <span class="tit center">端口组标签名</span>
+            <div class="info">
+                <input type="text" class="ipt ipt_txt" id="label_name" placeholder="请输入端口组标签名"/>
+            </div>
+        </div>
+        <div class="item left">
+            <span class="tit center">端口组端口</span>
+            <div class="info">
+                <input type="text" class="ipt ipt_txt" id="ports" placeholder="输入端口组端口"/>
+            </div>
+        </div>
+        <div class="item left">
+            <span class="tit center">使用的端口id</span>
+            <div class="info l_info">
+                <select id="ports_policy_id" lay-filter="_type">
+                </select>
+                <!--<input type="text" class="ipt ipt_txt" id="ports_policy_id" placeholder="请输入使用的端口id"/>-->
+            </div>
+        </div>
+        <div class="item left">
+            <span class="tit center">主机组</span>
+            <div class="info l_info">
+                <input type="text" class="ipt ipt_txt" id="hosts" placeholder="请输入主机组"/>
+            </div>
+        </div>
+        <div class="item left">
+            <span class="tit center">使用的主机ID</span>
+            <div class="info l_info">
+                <select class="ipt ipt_txt" id="hosts_policy_id" lay-filter="hosts_policy_id" placeholder="请输入使用的主机ID">
+                    
+                </select>
+            </div>
+        </div>
+        <div class="item left">
+            <span class="tit center">延时类型</span>
+            <div class="info l_info">
+                <select id="_type" lay-filter="_type">
+                    <option value ="delay">延时执行</option>
+                    <option value ="instant">立即执行</option>
+                </select>
+            </div>
+        </div>
+        <div class="item left">
+            <span class="tit center">延时时间</span>
+            <div class="info l_info">
+                <input type="text" class="ipt ipt_txt" id="schedule_time" placeholder="请选择延时时间"/>
+            </div>
+        </div>
+        <div class="item left">
+            <span class="tit center">任务执行数</span>
+            <div class="info l_info">
+                <select id="loop_number" lay-filter="_type" placeholder="请输入任务执行次数">
+                        <option value ="1">1</option>
+                        <option value ="2">2</option>
+                        <option value ="3">3</option>
+                </select>
+            </div>
+        </div>
+        <div class="item left">
+            <span class="tit center">任务线程数</span>
+            <div class="info l_info">
+                <!--<input type="text" class="ipt ipt_txt" id="thread_number" placeholder="请输入任务线程数"/>-->
+                <select id="thread_number" lay-filter="service_identify">
+                    <option value ="1">1</option>
+                    <option value ="2">2</option>
+                    <option value ="3">3</option>
+                    <option value ="4">4</option>
+                    <option value ="5">5</option>
+                </select>
+            </div>
+        </div>
+        <div class="item left">
+            <span class="tit center">是否扫描服务</span>
+            <div class="info l_info">
+                <select id="service_identify" lay-filter="service_identify">
+                    <option value ="true">是</option>
+                    <option value ="false">否</option>
+                </select>
+            </div>
+        </div>
+        <div class="item left">
+            <span class="tit center">是否扫描udp</span>
+            <div class="info l_info">
+                <select id="udp_enable" lay-filter="udp_enable">
+                    <option value ="true">是</option>
+                    <option value ="false">否</option>
+                </select>
+            </div>
+        </div>
+        <div class="item left">
+            <span class="tit center">开启快速扫描</span>
+            <div class="info l_info">
+                <select id="fast_scan" lay-filter="fast_scan">
+                    <option value ="true">否</option>
+                    <option value ="false">是</option>
+                </select>
+            </div>
+        </div>
+        <button class="button clean" onclick="add_save()">确定添加</button>
+    </div>
+    <i class="z_ico z1"></i>
+    <i class="z_ico z2"></i>
+    <i class="z_ico z3"></i>
+    <i class="z_ico z4"></i>
+</div>
+
+<div class="pop pop_bp layui-form pop_editDkz" style="height: 480px;">
+    <h6 class="p_tit">修改端口扫描<em class="close fr"></em></h6>
+    <div class="detail">
+        <div class="item left">
+            <span class="tit center">ID</span>
+            <div class="info">
+                <input type="text" class="ipt ipt_txt" id="label_id" disabled="disabled" placeholder="ID"/>
+                <!--<select id="label_id" lay-filter="label_id" disabled>-->
+                    <!--<option value=""></option>-->
+                <!--</select>-->
+            </div>
+        </div>
+        <div class="item left">
+            <span class="tit center">端口组标签名</span>
+            <div class="info">
+                <input type="text" class="ipt ipt_txt" id="label_name_edit" placeholder="请输入端口组标签名"/>
+            </div>
+        </div>
+        <div class="item left">
+            <span class="tit center">端口组端口</span>
+            <div class="info">
+                <input type="text" class="ipt ipt_txt" id="ports_edit" placeholder="输入端口组端口"/>
+            </div>
+        </div>
+        <div class="item left">
+            <span class="tit center">使用的端口id</span>
+            <div class="info l_info">
+                <input type="text" class="ipt ipt_txt" id="ports_policy_id_edit"  placeholder="请输入使用的端口id"/>
+                <!--<select id="ports_policy_id_edit" lay-filter="ports_policy_id_edit" disabled>-->
+                <!--</select>-->
+            </div>
+        </div>
+        <div class="item left">
+            <span class="tit center">主机组</span>
+            <div class="info l_info">
+                <input type="text" class="ipt ipt_txt" id="hosts_edit" placeholder="请输入主机组"/>
+            </div>
+        </div>
+        <div class="item left">
+            <span class="tit center">使用的主机ID</span>
+            <div class="info l_info">
+                <input type="text" class="ipt ipt_txt" id="hosts_policy_id_edit" placeholder="请输入使用的主机ID"/>
+            </div>
+        </div>
+        <div class="item left">
+            <span class="tit center">延时类型</span>
+            <div class="info l_info">
+                <select id="_type_edit" lay-filter="_type">
+                    <option value ="delay">delay</option>
+                    <option value ="instant">instant</option>
+                </select>
+            </div>
+        </div>
+        <div class="item left">
+            <span class="tit center">延时时间</span>
+            <div class="info l_info">
+                <input type="text" class="ipt ipt_txt" id="schedule_time_edit" disabled="disabled" placeholder="请选择延时时间"/>
+            </div>
+        </div>
+        <div class="item left">
+            <span class="tit center">任务执行数</span>
+            <div class="info l_info">
+                <input type="text" class="ipt ipt_txt" id="loop_number_edit" disabled="disabled" placeholder="请输入任务执行次数"/>
+            </div>
+        </div>
+        <div class="item left">
+            <span class="tit center">任务线程数</span>
+            <div class="info l_info">
+                <!--<input type="text" class="ipt ipt_txt" id="thread_number_edit" placeholder="请输入任务线程数"/>-->
+                <select id="thread_number_edit" lay-filter="service_identify" disabled="disabled">
+                    <option value ="1">1</option>
+                    <option value ="2">2</option>
+                    <option value ="3">3</option>
+                    <option value ="4">4</option>
+                    <option value ="5">5</option>
+                </select>
+            </div>
+        </div>
+        <div class="item left">
+            <span class="tit center">是否扫描服务</span>
+            <div class="info l_info">
+                <select id="service_identify_edit" lay-filter="service_identify_edit" disabled="disabled">
+                    <option value ="true">true</option>
+                    <option value ="false">false</option>
+                </select>
+            </div>
+        </div>
+        <div class="item left">
+            <span class="tit center">是否扫描udp</span>
+            <div class="info l_info">
+                <select id="udp_enable_edit" lay-filter="udp_enable" disabled="disabled">
+                    <option value ="true">true</option>
+                    <option value ="false">false</option>
+                </select>
+            </div>
+        </div>
+        <div class="item left">
+            <span class="tit center">开启快速扫描</span>
+            <div class="info l_info">
+                <select id="fast_scan_edit" lay-filter="fast_scan" disabled="disabled">
+                    <option value ="true">true</option>
+                    <option value ="false">false</option>
+                </select>
+            </div>
+        </div>
+        <button class="button" onclick="edit_save()">确定修改</button>
+    </div>
+    <i class="z_ico z1"></i>
+    <i class="z_ico z2"></i>
+    <i class="z_ico z3"></i>
+    <i class="z_ico z4"></i>
+</div>
+
+<div class="pop pop_bp layui-form confirmDel" style="height: 200px;width: 300px;margin: -100px 0 0 -150px;position: fixed; left: 50%; top: 50%;">
+    <h6 class="p_tit">是否删除 <em class="close fr"></em></h6>
+    <div class="detail">
+        <button class="button" style="float: left" id="confirm">确认</button>
+        <button class="button" style="float: right" onclick="cancel()">取消</button>
+    </div>
+    <i class="z_ico z1"></i>
+    <i class="z_ico z2"></i>
+    <i class="z_ico z3"></i>
+    <i class="z_ico z4"></i>
+</div>
+
+<script src="js/jquery-1.8.3.min.js"></script>
+<script src="layui/layui.js"></script>
+<script src="js/common.js" charset="utf-8"></script>
+<script>
+    _left_li = 'item_2 ';
+
+layui.use(['upload','form','laydate'], function(){
+var form = layui.form
+,layer = layui.layer
+,layedit = layui.layedit
+,laydate = layui.laydate
+,upload = layui.upload;
+form.on('checkbox(allChoose)', function(data){
+    var child = $(data.elem).parents('table').find('tbody input[type="checkbox"]');
+    child.each(function(index, item){
+        item.checked = data.elem.checked;
+    });
+    form.render('checkbox');
+});
+form.on('checkbox(itemChoose)',function(data){
+    var sib = $(data.elem).parents('table').find('tbody input[type="checkbox"]:checked').length;
+    var total = $(data.elem).parents('table').find('tbody input[type="checkbox"]').length;
+    if(sib == total){
+        $(data.elem).parents('table').find('thead input[type="checkbox"]').prop("checked",true);
+        form.render();
+    }else{
+        $(data.elem).parents('table').find('thead input[type="checkbox"]').prop("checked",false);
+        form.render();
+    }
+});
+ laydate.render({
+    elem: '#date'
+    ,type: 'datetime'
+  });
+  //指定允许上传的文件类型
+  upload.render({
+    elem: '#fileup'
+    ,url: '/upload/'
+    ,accept: 'file' //普通文件
+    ,done: function(res){
+      console.log(res)
+    }
+  });
+    laydate.render({
+        elem: '#schedule_time',
+        type: 'datetime'
+        ,theme: '#132240'
+        ,format: 'yyyy-MM-dd HH:mm:ss'
+    });
+    form.on('select(_type)', function(data){
+        if($("#_type").val() == 'instant'){
+            $('#schedule_time').attr("disabled", true);
+        }else{
+            $('#schedule_time').attr("disabled", false);
+        }
+    });
+
+});
+    //添加判断
+    $('#hosts').on('input',function(){
+        if($("#hosts").val() != ''){
+            $("#hosts_policy_id").attr("disabled", true );
+        }else{
+            $("#hosts_policy_id").attr("disabled", false );
+        }
+    });
+    $('#hosts_policy_id').on('input',function(){
+        if($("#hosts_policy_id").val() != ''){
+            $("#hosts").attr("disabled", true );
+        }else{
+            $("#hosts").attr("disabled", false );
+        }
+    });
+    //添加属于新增，新增前弹出框内容应该为空
+    function addnew() {
+        $('#label_name').val('');
+        $('#ports').val('');
+        $('#ports_policy_id').val('');
+        $('#hosts').val('');
+        $('#hosts_policy_id').val('');
+        $('#_type').val('');
+        $('#schedule_time').val('');
+        $('#loop_number').val('');
+        $('#thread_number').val('');
+        $('#service_identify').val('');
+        $('#udp_enable').val('');
+        $('#fast_scan').val('');
+    }
+    //scanner添加
+    function add_save() {
+        var label_name = $('#label_name').val(),
+        ports = $('#ports').val(),
+        ports_policy_id = $('#ports_policy_id').val(),
+        hosts = $('#hosts').val(),
+        hosts_policy_id = $("#hosts_policy_id").val(),
+        _type = $('#_type').val(),
+        schedule_time = $('#schedule_time').val(),
+        loop_number = $('#loop_number').val(),
+        thread_number = $('#thread_number').val(),
+        service_identify,
+        udp_enable,
+        fast_scan ;
+        if($('#fast_scan').val() == true){
+            fast_scan = true;
+        }else{
+            fast_scan = false;
+        }
+        if($('#udp_enable').val() == true){
+            udp_enable=true;
+        }else{
+            udp_enable = false;
+        }
+        if($('#service_identify').val() == true){
+            service_identify = true;
+        }else{
+            service_identify = false;
+        }
+        var _data = {
+            label_name: label_name,
+            ports: ports,
+            ports_policy_id: ports_policy_id,
+            hosts: hosts,
+            hosts_policy_id:hosts_policy_id,
+            _type: _type,
+            schedule_time: schedule_time,
+            loop_number: loop_number,
+            thread_number: thread_number,
+            service_identify: service_identify,
+            udp_enable: udp_enable,
+            fast_scan: fast_scan,
+        };
+        if (!label_name) {
+            showmsg('请输入主机组标签名');
+            return false;
+        }
+        $.ajax({
+            url:site_url + '/policy/scanner?action=add',
+            data:JSON.stringify(_data),
+            type:'post',
+            dataType: 'json',
+            processData: false,
+            contentType: 'application/json;charset=utf-8',
+            success: function(){
+        console.log(_data)
+
+                $('.pop').hide();
+                $('.pop_bg').hide();
+                to_find();
+            },
+            error:function(){
+                $('.pop').hide();
+                $('.pop_bg').css('display','none')
+            }
+        })
+    }
+    // 获取主机组ID
+    function to_find_id(_page,postUrl,typeData) {
+        var _data = {id: _page};
+        _type = 'post';
+        $.ajax({
+            url: site_url + postUrl,
+            data: JSON.stringify(_data),
+            type: _type,
+            dataType: 'json',
+            processData: false,
+            contentType: 'application/json;charset=utf-8',
+            success: function (result) {
+                if(typeData===1){ //使用的主机ID
+                    var optionHtml=""
+                    $('#hosts_policy_id').html('<option>请选择模型ID</option>');
+                    result.info.data.forEach(function (item,index){
+                        optionHtml+='<option value ='+item.id+'>'+item.id+'</option>'
+                    })
+                    $("#hosts_policy_id").empty().html(optionHtml)
+                    layui.form.render("select");
+                }
+                if(typeData===2){ //使用的端口id
+                    var optionHtml1=""
+                    // console.log(result.info.data)
+                    $('#ports_policy_id').html('<option>请选择模型ID</option>');
+                    // '+item.label_name+'
+                    result.info.data.forEach(function (item,index){
+                        optionHtml1+='<option value ='+item.id+'>'+item.id+'</option>'
+                    })
+                    $("#ports_policy_id").empty().html(optionHtml1)
+                    layui.form.render("select");
+                }    
+            }
+        })
+    }
+    
+    function to_find(_page) {
+        var _data = {id: _page};
+        _type = 'post';
+        $.ajax({
+            url: site_url + '/policy/scanner?action=show',
+            data: JSON.stringify(_data),
+            type: _type,
+            dataType: 'json',
+            processData: false,
+            contentType: 'application/json;charset=utf-8',
+            success: function (result) {
+                // _record_count = result.info.data.length;
+                _list = result.info.data;
+                // console.log(result.info)
+                $('#content').html('');
+                
+                
+                if(_page == undefined  || _page == ''){
+                    for(i=0; i<_list.length; i++) {
+                        _row = _list[i];
+                        var times = new Date(parseInt(_list[i].create_time) * 1000).toLocaleString().replace(/:\d{1,2}$/,' ');
+                        $('#content').append('<tr class="data_' + _row['id'] + '">\n' +
+                            '                                <td>\n' +
+                            '                                    <input type="checkbox" name="ids[]" value="' + _row['id'] + '" lay-skin="primary" lay-filter="itemChoose">\n' +
+                            '                                </td>\n' +
+                            '                                <td>' + _row['id'] + '</td>\n' +
+                            '                                <td>' + times + '</td>\n' +
+                            '                                <td>' + _row['fast_scan'] + '</td>\n' +
+                            '                                <td>' + _row['hosts'] + '</td>\n' +
+                            '                                <td>' + _row['hosts_policy_id'] + '</td>\n' +
+                            '                                <td>' + _row['label_name'] + '</td>\n' +
+                            '                                <td>' + _row['loop_number'] + '</td>\n' +
+                            '                                <td>' + _row['ports'] + '</td>\n' +
+                            '                                <td>' + _row['ports_policy_id'] + '</td>\n' +
+                            '                                <td>' + _row['schedule_time'] + '</td>\n' +
+                            '                                <td>' + _row['service_identify'] + '</td>\n' +
+                            '                                <td>' + _row['thread_number'] + '</td>\n' +
+                            '                                <td>' + _row['udp_enable'] + '</td>\n' +
+                            '                                <td>' + _row['_type'] + '</td>\n' +
+                            '                                <td>\n' +
+                            '                                    <a href="javascript:;" onclick="edit(\'' + _row['id'] + '\')" class="lk_ico edit"></a>\n' +
+                            '                                    <a href="javascript:;" onclick="del(\'' + _row['id'] + '\')" class="lk_ico del"></a>\n' +
+                            '                                </td>\n' +
+                            '                            </tr>');
+                    }
+                    //
+                    // $('.fz').html('共' + _record_count + '条记录');
+                    // _maxpage = Math.ceil(_record_count / _pagesize);
+                    // $(".pages").createPage({
+                    //     pageNum: _maxpage,
+                    //     current: _page,
+                    //     backfun: function(e) {
+                    //         console.log(e);//回调
+                    //         to_find(e.current);
+                    //         _page = e.current;
+                    //         console.log(_page)
+                    //         to_find(_page);
+                    //     }
+                    // });
+                    form_render();
+                }else{
+                    var times = new Date(parseInt(_list.create_time) * 1000).toLocaleString().replace(/:\d{1,2}$/,' ');
+                    $('#content').append('<tr class="data_' + _list.id + '">\n' +
+                        '                                <td>\n' +
+                        '                                    <input type="checkbox" name="ids[]" value="' + _list.id + '" lay-skin="primary" lay-filter="itemChoose">\n' +
+                        '                                </td>\n' +
+                        '                                <td>' + times + '</td>\n' +
+                        '                                <td>' + _list.fast_scan + '</td>\n' +
+                        '                                <td>' + _list.hosts + '</td>\n' +
+                        '                                <td>' + _list.hosts_policy_id + '</td>\n' +
+                        '                                <td>' + _list.id + '</td>\n' +
+                        '                                <td>' + _list.label_name + '</td>\n' +
+                        '                                <td>' + _list.loop_number + '</td>\n' +
+                        '                                <td>' + _list.ports + '</td>\n' +
+                        '                                <td>' + _list.ports_policy_id + '</td>\n' +
+                        '                                <td>' + _list.schedule_time + '</td>\n' +
+                        '                                <td>' + _list.service_identify + '</td>\n' +
+                        '                                <td>' + _list.thread_number + '</td>\n' +
+                        '                                <td>' + _list.udp_enable + '</td>\n' +
+                        '                                <td>' + _list._type + '</td>\n' +
+                        '                                <td>\n' +
+                        '                                    <a href="javascript:;" onclick="edit(\'' + _list.id + '\')" class="lk_ico edit"></a>\n' +
+                        '                                    <a href="javascript:;" onclick="del(\'' + _list.id + '\')" class="lk_ico del"></a>\n' +
+                        '                                </td>\n' +
+                        '                            </tr>');
+                }
+            }
+        })
+        return _page
+    }
+    //编辑    暂时无法编辑成功，待处理
+    function edit(id) {
+        var _obj = $('.data_' + id);
+        $('#label_id').val($(_obj).find('td:eq(1)').html() );
+        $('#ports_policy_id_edit').val($(_obj).find('td:eq(9)').html() );
+        $('#label_name_edit').val($(_obj).find('td:eq(6)').html() );
+        $('#ports_edit').val($(_obj).find('td:eq(8)').html() );
+        $('#ports_policy_id_edit').val($(_obj).find('td:eq(9)').html() );
+        $('#hosts_edit').val($(_obj).find('td:eq(4)').html() );
+        $("#hosts_policy_id_edit").val($(_obj).find('td:eq(5)').html() );
+        // $('#_type_edit').val($(_obj).find('td:eq(14)').html() );
+        var type = $(_obj).find('td:eq(14)').html();
+        console.log(type)
+        $("#_type_edit").next('div').children('div').children('input').val(type);
+        $('#schedule_time_edit').val($(_obj).find('td:eq(2)').html() );
+        $('#loop_number_edit').val($(_obj).find('td:eq(7)').html() );
+        // $('#thread_number_edit').val($(_obj).find('td:eq(12)').html() );
+        var thread_number_edit = $(_obj).find('td:eq(12)').html();
+        $("#thread_number_edit").next('div').children('div').children('input').val(thread_number_edit);
+        // $('#service_identify_edit').val($(_obj).find('td:eq(11)').html() );
+        var service_identify_edit = $(_obj).find('td:eq(11)').html();
+        $("#service_identify_edit").next('div').children('div').children('input').val(service_identify_edit);
+        // $('#udp_enable_edit').val($(_obj).find('td:eq(13)').html() );
+        var udp_enable_edit = $(_obj).find('td:eq(13)').html();
+        $("#udp_enable_edit").next('div').children('div').children('input').val(udp_enable_edit);
+        // $('#fast_scan_edit').val($(_obj).find('td:eq(2)').html() );
+        var fast_scan_edit = $(_obj).find('td:eq(3)').html();
+        $("#fast_scan_edit").next('div').children('div').children('input').val(fast_scan_edit);
+        // if($("#hosts_edit").val() != ''){
+        //     $("#hosts_policy_id_edit").attr("disabled", true );
+        // }else{
+        //     $("#hosts_policy_id_edit").attr("disabled", false );
+        // }
+        // if($("#hosts_policy_id_edit").val() != ''){
+        //     $("#hosts_edit").attr("disabled", true );
+        // }else{
+        //     $("#hosts_edit").attr("disabled", false );
+        // }
+        $('.pop_bg').show();
+        $('.pop_editDkz').show();
+    }
+    function edit_save() {
+        var id = $('#label_id').val(),
+        label_name = $('#label_name_edit').val(),
+        ports = $('#ports_edit').val(),
+        ports_policy_id = $('#ports_policy_id_edit').val(),
+        hosts = $('#hosts_edit').val(),
+        _type = $('#_type_edit').val(),
+        // fast_scan = $('#fast_scan_edit').val()
+        // schedule_time = $('#schedule_time_edit').val(),
+        // loop_number = $('#loop_number_edit').val(),
+        // thread_number = $('#thread_number_edit').val(),
+        // service_identify = $('#service_identify_edit').val(),
+        // udp_enable = $('#udp_enable_edit').val(),
+        // fast_scan = $('#fast_scan_edit').val(),
+        _data = {
+            id: id,
+            label_name: label_name,
+            ports: ports,
+            ports_policy_id: ports_policy_id,
+            hosts: hosts,
+            _type: _type,
+            
+            // schedule_time: schedule_time,
+            // loop_number: loop_number,
+            // thread_number: thread_number,
+            // service_identify: service_identify,
+            // udp_enable: udp_enable,
+            // fast_scan: fast_scan,
+        };
+        $.ajax({
+            url:site_url + '/policy/scanner?action=update',
+            data:JSON.stringify(_data),
+            type:'post',
+            dataType: 'json',
+            processData: false,
+            contentType: 'application/json;charset=utf-8',
+            success: function(res){
+                // console.log(res)
+                to_find();
+                $('.pop').hide();
+                $('.pop_bg').hide();
+            },
+        })
+    }
+    /**
+     *
+     * 删除按钮
+     *
+     */
+    function del(obj){
+        $('.pop_bg').show();
+        $('.confirmDel').show();
+        //确认删除
+        var _data = {id:obj};
+        $('#confirm').on('click',function () {
+            $.ajax({
+                url:site_url + '/policy/scanner?action=rm',
+                data:JSON.stringify(_data),
+                type:'post',
+                dataType: 'json',
+                processData: false,
+                contentType: 'application/json;charset=utf-8',
+                success: function(){
+                    to_find();
+                    $('.pop').hide();
+                    $('.pop_bg').hide();
+                },
+            });
+        });
+    }
+    //取消按钮
+    function cancel(){
+        $('.pop_bg').hide();
+        $('.confirmDel').hide();
+    }
+    $(function(){
+        to_find();
+        //监听输入框输入并进行搜索
+        $("#find_key").on("input",function(e){
+            var _key = $('#find_key').val();
+            to_find(_key);
+        });
+    })
+    // 获取端口组ID
+    $(function (){
+        to_find_id('','/policy/host?action=show',1)
+        to_find_id('','/policy/port?action=show',2)
+    })
+</script>
+</body>
+</html>

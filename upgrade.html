@@ -1,0 +1,151 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="layui/css/layui.css">
+<link rel="stylesheet" href="css/style.css">
+<title>系统-系统升级</title>
+</head>
+
+<body class="layui-layout-body">
+<div class="layui-layout layui-layout-admin">
+    <div class="layui-header">
+    </div>
+
+    <div class="layui-side">
+        <div class="layui-side-scroll">
+        </div>
+    </div>
+    <div class="layui-body">
+        <div class="container layui-form">
+            <div class="pub_tit">
+                <span class="tit">系统升级</span>
+            </div>
+            <div class="upgrade_main">
+                <div class="upgrade_top layui-form">
+                    <div class="lbox">
+                        <img src="images/icon_12.png" alt="" class="icon"/>
+                        <p class="fz">系统当前Peleaae号：2R2F1B</p>
+                    </div>
+                    <div class="rbox">
+                        <div class="pub_radio">
+                            <li>
+                                <input type="radio" name="user" value="1" title="自动升级（每天零点，系统自动进行升级操作）" checked="">
+                            </li>
+                            <li>
+                                <input type="radio" name="user" value="2" title="手动升级" >
+                            </li>
+                        </div>
+                        <div class="btns">
+                            <button class="ipt button bg_1">立即升级</button>
+                            <button class="ipt button bg_2">导入升级包并升级</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="pub_tablew">
+                    <table class="pub_table">
+                        <thead>
+                            <th>升级包版本</th>
+                            <th>标题</th>
+                            <th>下载日期</th>
+                            <th>备注</th>
+                        </thead>
+                        <tbody id="content">
+
+                        </tbody>
+                    </table>
+                </div>
+                <div class="pagelist">
+                    <span class="fz"></span>
+                    <div class="pages fr">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+<script src="js/jquery-1.8.3.min.js"></script>
+<script src="layui/layui.js"></script>
+<script src="js/common.js" charset="utf-8"></script>
+<script>
+layui.use(['form', 'upload', 'laydate'], function(){
+    var form = layui.form
+    ,layer = layui.layer
+    ,layedit = layui.layedit
+    ,laydate = layui.laydate
+    ,upload = layui.upload;
+
+    form.on('checkbox(allChoose)', function(data){
+        var child = $(data.elem).parents('table').find('tbody input[type="checkbox"]');
+        child.each(function(index, item){
+            item.checked = data.elem.checked;
+        });
+        form.render('checkbox');
+    });
+    form.on('checkbox(itemChoose)',function(data){
+        var sib = $(data.elem).parents('table').find('tbody input[type="checkbox"]:checked').length;
+        var total = $(data.elem).parents('table').find('tbody input[type="checkbox"]').length;
+        if(sib == total){
+            $(data.elem).parents('table').find('thead input[type="checkbox"]').prop("checked",true);
+            form.render();
+        }else{
+            $(data.elem).parents('table').find('thead input[type="checkbox"]').prop("checked",false);
+            form.render();
+        }
+    });
+
+});
+_left_li = 'item_10';
+_left_menu_at = 'upgrade';
+
+_url = site_url + 'upgrade';
+function to_find(_page) {
+    _data = {page: _page};
+    _type = 'get';
+    $.ajax({
+        url: _url,
+        data: _data,
+        type: _type,
+        dataType: 'json',
+        success: function (result) {
+            _record_count = result.real_count;
+            _list = result.lists;
+            $('#content').html('');
+            for(i=0; i<_list.length; i++) {
+                _row = _list[i];
+                $('#content').append('<tr>\n' +
+                    '                                <td>' + _row['targetid'] + '</td>\n' +
+                    '                                <td>' + _row['targetid'] + '</td>\n' +
+                    '                                <td>' + _row['targetid'] + '</td>\n' +
+                    '                                <td>\n' +
+                    '                                    <em class="c_blue">已下载</em>\n' +
+                    '                                    <em class="c_yellow">已下载</em>\n' +
+                    '                                </td>\n' +
+                    '                            </tr>' +
+                    '<tr>'
+                )
+            }
+
+            $('.fz').html('共' + _record_count + '条记录');
+            $(".pages").createPage({
+                pageNum: 10,
+                current: 1,
+                backfun: function(e) {
+                    console.log(e);//回调
+                    to_find(e.current);
+                }
+            });
+            form_render();
+        }
+    })
+}
+</script>
+</body>
+</html>

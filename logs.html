@@ -1,0 +1,157 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="layui/css/layui.css">
+<link rel="stylesheet" href="css/style.css">
+<title>系统-日志管理</title>
+</head>
+
+<body class="layui-layout-body">
+<div class="layui-layout layui-layout-admin">
+    <div class="layui-header">
+    </div>
+
+    <div class="layui-side">
+        <div class="layui-side-scroll">
+        </div>
+    </div>
+    <div class="layui-body">
+        <div class="container layui-form">
+            <div class="pub_tit">
+                <span class="tit">日志管理</span>
+            </div>
+            <div class="user_main">
+                <form id="form_post">
+                <div class="pub_topbar clearfix">
+                    <div class="pub_radio fl">
+                        <input type="radio" name="type" value="0" title="所有日志" checked="">
+                        <input type="radio" name="type" value="1" title="登录日志" >
+                        <input type="radio" name="type" value="2" title="操作日志">
+                        <input type="radio" name="type" value="3" title="系统日志" >
+                    </div>
+                    <div class="pub_search fr">
+                        <input type="text" class="ipt ipt_txt" name="namekeyword" placeholder="输入任务名或标签" />
+                    </div>
+                </div>
+                <div class="pub_btns">
+                    <button class="btn yellow an export">导出日志</button>
+                </div>
+                </form>
+                <div class="pub_tablew">
+                    <table class="pub_table">
+                        <thead>
+                            <th>日志类型</th>
+                            <th>用户名</th>
+                            <th>用户组</th>
+                            <th>记录IP</th>
+                            <th>行为</th>
+                            <th>时间</th>
+                        </thead>
+                        <tbody id="content">
+
+                        </tbody>
+                    </table>
+                </div>
+                <div class="pagelist">
+                    <span class="fz"></span>
+                    <div class="pages fr">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="js/jquery-1.8.3.min.js"></script>
+<script src="layui/layui.js"></script>
+<script src="js/common.js" charset="utf-8"></script>
+<script src="js/zxf_page.js" charset="utf-8"></script>
+<script>
+    _left_li = 'item_10';
+    _left_menu_at = 'logs'
+layui.use(['form', 'upload', 'laydate'], function(){
+var form = layui.form
+,layer = layui.layer
+,layedit = layui.layedit
+,laydate = layui.laydate
+,upload = layui.upload;
+
+form.on('checkbox(allChoose)', function(data){
+    var child = $(data.elem).parents('table').find('tbody input[type="checkbox"]');
+    child.each(function(index, item){
+        item.checked = data.elem.checked;
+    });
+    form.render('checkbox');
+});
+form.on('checkbox(itemChoose)',function(data){
+    var sib = $(data.elem).parents('table').find('tbody input[type="checkbox"]:checked').length;
+    var total = $(data.elem).parents('table').find('tbody input[type="checkbox"]').length;
+    if(sib == total){
+        $(data.elem).parents('table').find('thead input[type="checkbox"]').prop("checked",true);
+        form.render();
+    }else{
+        $(data.elem).parents('table').find('thead input[type="checkbox"]').prop("checked",false);
+        form.render();
+    }
+});
+
+
+});
+
+_url = site_url + 'logs';
+function to_find(_page) {
+    var _key = $('#find_key').val();
+    _data = {page: _page};
+    _type = 'get';
+    if (_key) {
+        _type = 'post';
+        _data.action = 'search';
+        _data.namekeyword = _key;
+    }
+    $.ajax({
+        url: _url,
+        data: _data,
+        type: _type,
+        dataType: 'json',
+        success: function (result) {
+            _record_count = result.real_count;
+            _list = result.list;
+            $('#content').html('');
+            for(i=0; i<_list.length; i++) {
+                _row = _list[i];
+                $('#content').append('<tr>\n' +
+                    '                                <td>' + _row['targetid'] + '</td>\n' +
+                    '                                <td>' + _row['targetid'] + '</td>\n' +
+                    '                                <td>' + _row['targetid'] + '</td>\n' +
+                    '                                <td>' + _row['targetid'] + '</td>\n' +
+                    '                                <td>\n' +
+                    '                                    <em>' + _row['targetid'] + '</em>\n' +
+                    '                                </td>\n' +
+                    '                                <td>' + _row['targetid'] + '</td>\n' +
+                    '                            </tr>'
+                )
+            }
+
+            $('.fz').html('共' + _record_count + '条记录');
+            _maxpage = ceil(_record_count / _pagesize);
+            $(".pages").createPage({
+                pageNum: _maxpage,
+                current: _page,
+                backfun: function(e) {
+                    console.log(e);//回调
+                    to_find(e.current);
+                }
+            });
+            form_render();
+        }
+    })
+}
+
+$('#form_post').submit(function () {
+    _data = $('#form_post').serialize();
+    return false;
+});
+</script>
+</body>
+</html>

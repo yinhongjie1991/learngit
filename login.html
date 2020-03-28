@@ -1,0 +1,70 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="css/style.css">
+<title>登录</title>
+</head>
+
+<body>
+<div class="login_main">
+    <div class="login_box">
+        <h6 class="title">用户登录</h6>
+        <div class="login_form">
+            <form id="form_login">
+                <li class="item">
+                    <input type="text" class="ipt ipt_txt ipt_user" name="username" required placeholder="请输入用户名"/>
+                </li>
+                <li class="item">
+                    <input type="text" class="ipt ipt_txt ipt_psd" name="password" required placeholder="请输入密码"/>
+                </li>
+                <li class="item clearfix">
+                    <input type="text" class="ipt ipt_txt ipt_code fl" name="captcha" required placeholder="请输入验证码"/>
+                    <button class="getcode fr" type="button" onclick="getCode()">
+                        <img src="images/img_09.jpg" id="codeimg" alt="" />
+                    </button>
+                </li>
+                <input type="submit" value="登录" class="ipt submit"/>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+
+
+<script src="js/jquery-1.8.3.min.js"></script>
+<script src="js/common.js" charset="utf-8"></script>
+<script language="JavaScript">
+    $(function () {
+        setCookie('name', 'yexiao');
+        $('#form_login').submit(function () {
+            var _data = $('#form_login').serialize();
+            $.ajax({
+                url: site_url + 'login/',
+                data:_data,
+                type: 'post',
+                dataType: 'json',
+                success: function(data, status) {
+                    if (data.status == 200) {
+                        setCookie('ticket', res.ticket);
+                        setCookie('userid', res.userid);
+                        setCookie('name', $('.ipt_user').val());
+
+                        location.href = '漏洞列表.html';
+                    } else {
+                        showmsg(data.msg, 0);
+                    }
+                }
+            });
+            return false;
+        })
+    })
+    function getCode() {
+        console.log('getcode');
+        $('#codeimg').attr('src', site_url + 'get_valid_img');
+    }
+    getCode();
+</script>
+</body>
+</html>

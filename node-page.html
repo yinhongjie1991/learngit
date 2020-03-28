@@ -1,0 +1,492 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="layui/css/layui.css">
+<link rel="stylesheet" href="css/just-tip.css">
+<link rel="stylesheet" href="css/style.css">
+<title>节点管理</title>
+</head>
+<style>
+    .layui-form-select dl dd.layui-this{
+        background-color: #132240;
+    }
+    .layui-input, .layui-textarea, .layui-select{
+        background-color: #132240;
+        border-color: #485679;
+        border:0;
+        color: #7D8AB2;
+    }
+</style>
+<body class="layui-layout-body">
+<div class="layui-layout layui-layout-admin">
+    <div class="layui-header">
+    </div>
+
+    <div class="layui-side">
+        <div class="layui-side-scroll">
+        </div>
+    </div>
+    <div class="layui-body">
+        <div class="container layui-form">
+            <div class="pub_tit clearfix">
+                <span class="tit fl">节点管理</span>
+                <span class="smfz fr">
+                    <em class="ml20">系统全局状态：正在执行的任务  <i class="c_yellow">1</i></em>
+                    <em class="ml20">正在等待的任务  <i class="c_yellow">0</i></em>
+                </span>
+            </div>
+            <div class="user_main">
+                <!-- <div class="pub_topbar clearfix">
+                    <div class="pub_search fl">
+                        <input type="text" class="ipt ipt_txt find_key" id="find_key" placeholder="输入端口组id进行搜索" />
+                    </div>
+                    <div class="fr">
+                        <button class="btn fr mt8 ml10 addMbz" onclick="addnew()">添加</button>
+                    </div>
+
+                </div> -->
+                <div class="pub_tablew">
+                    <table class="pub_table">
+                        <thead>
+                            <th>节点名称</th>
+                            <th>节点ip</th>
+                            <th>CPU负载</th>
+                            <th>内存负载 </th>
+                            <th>运行中的任务id</th>
+                            <th>节点运行状态</th>
+                        </thead>
+                        <tbody id="content">
+
+                        </tbody>
+                    </table>
+                </div>
+                <div class="pagelist">
+                    <span class="fz"></span>
+                    <div class="pages fr">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--添加任务-->
+<div class="pop_bg"></div>
+<div class="pop pop_bp layui-form pop_bpMbz">
+    <h6 class="p_tit">添加任务<em class="close fr"></em></h6>
+    <div class="detail">
+        <div class="item">
+            <span class="tit">任务标签名</span>
+            <div class="info">
+                <input type="text" class="ipt ipt_txt" id="label_name" placeholder="请输入任务标签名"/>
+            </div>
+        </div>
+        <div class="item">
+            <span class="tit">任务类型</span>
+            <div class="info">
+                <!--<input type="text" class="ipt ipt_txt" id="task_type" placeholder="请输入任务类型"/>-->
+                <select id="task_type" lay-filter="task_type">
+                    <option value ="scanner">scanner</option>
+                    <option value ="exploit">exploit</option>
+                    <option value ="brute">brute</option>
+                </select>
+            </div>
+        </div>
+        <!--<div class="item">-->
+            <!--<span class="tit">任务状态</span>-->
+            <!--<div class="info l_info">-->
+                <!--<input type="text" class="ipt ipt_txt" id="task_status" placeholder="请输入任务状态"/>-->
+            <!--</div>-->
+        <!--</div>-->
+        <div class="item">
+            <span class="tit">模型ID</span>
+            <div class="info l_info">
+                <input type="text" class="ipt ipt_txt" id="model_id" placeholder="请输入模型ID"/>
+                <!--<select id="model_id" lay-filter="model_id">-->
+                    <!--<option value ="scanner">scanner</option>-->
+                    <!--<option value ="exploit">exploit</option>-->
+                    <!--<option value ="brute">brute</option>-->
+                <!--</select>-->
+            </div>
+        </div>
+        <button class="button" onclick="add_save()">确定添加</button>
+    </div>
+    <i class="z_ico z1"></i>
+    <i class="z_ico z2"></i>
+    <i class="z_ico z3"></i>
+    <i class="z_ico z4"></i>
+</div>
+<div class="pop pop_bp layui-form pop_editDkz">
+    <h6 class="p_tit">更新任务 <em class="close fr"></em></h6>
+    <div class="detail">
+        <div class="item">
+            <span class="tit">任务id</span>
+            <div class="info">
+                <input type="text" class="ipt ipt_txt" id="id_edit" placeholder="请输入任务id"/>
+            </div>
+        </div>
+        <div class="item">
+            <span class="tit">任务标签名</span>
+            <div class="info">
+                <input type="text" class="ipt ipt_txt" id="label_name_edit" placeholder="请输入任务标签名"/>
+            </div>
+        </div>
+        <div class="item">
+            <span class="tit">任务类型</span>
+            <div class="info">
+                <!--<input type="text" class="ipt ipt_txt" id="task_type_edit" placeholder="请输入任务类型"/>-->
+                <select id="task_type_edit" lay-filter="task_type_edit">
+                    <option value ="scanner">scanner</option>
+                    <option value ="exploit">exploit</option>
+                    <option value ="brute">brute</option>
+                </select>
+            </div>
+        </div>
+        <div class="item">
+            <span class="tit">模型ID</span>
+            <div class="info l_info">
+                <!--<input type="text" class="ipt ipt_txt" id="model_id_edit" placeholder="请输入模型ID"/>-->
+                <select id="model_id_edit" lay-filter="model_id_edit">
+                    <option value ="scanner">scanner</option>
+                    <option value ="exploit">exploit</option>
+                    <option value ="brute">brute</option>
+                </select>
+            </div>
+        </div>
+        <button class="button" onclick="edit_save()">确定修改</button>
+    </div>
+    <i class="z_ico z1"></i>
+    <i class="z_ico z2"></i>
+    <i class="z_ico z3"></i>
+    <i class="z_ico z4"></i>
+</div>
+<div class="pop pop_bp layui-form confirmDel" style="height: 200px;width: 300px;margin: -100px 0 0 -150px;position: fixed; left: 50%; top: 50%;">
+    <h6 class="p_tit">是否删除 <em class="close fr"></em></h6>
+    <div class="detail">
+        <button class="button" style="float: left" id="confirm">确认</button>
+        <button class="button" style="float: right" onclick="cancel()">取消</button>
+    </div>
+    <i class="z_ico z1"></i>
+    <i class="z_ico z2"></i>
+    <i class="z_ico z3"></i>
+    <i class="z_ico z4"></i>
+</div>
+<script src="js/jquery-1.8.3.min.js"></script>
+<script src="layui/layui.js"></script>
+<script src="js/justtools.js"></script>
+<script src="js/common.js" charset="utf-8"></script>
+<script src="js/zxf_page.js" charset="utf-8"></script>
+<script>
+layui.use(['form', 'upload', 'laydate'], function(){
+var form = layui.form
+,layer = layui.layer
+,layedit = layui.layedit
+,laydate = layui.laydate
+,upload = layui.upload;
+
+form.on('checkbox(allChoose)', function(data){
+    var child = $(data.elem).parents('table').find('tbody input[type="checkbox"]');
+    child.each(function(index, item){
+        item.checked = data.elem.checked;
+    });
+    form.render('checkbox');
+});
+form.on('checkbox(itemChoose)',function(data){
+    var sib = $(data.elem).parents('table').find('tbody input[type="checkbox"]:checked').length;
+    var total = $(data.elem).parents('table').find('tbody input[type="checkbox"]').length;
+    if(sib == total){
+        $(data.elem).parents('table').find('thead input[type="checkbox"]').prop("checked",true);
+        form.render();
+    }else{
+        $(data.elem).parents('table').find('thead input[type="checkbox"]').prop("checked",false);
+        form.render();
+    }
+});
+
+
+});
+//添加属于新增，新增前弹出框内容应该为空
+function addnew() {
+    $('#label_name').val('');
+    $('#task_type').val('');
+    $('#task_status').val('');
+    $('#model_id').val('');
+}
+/**
+ *
+ * 新增任务
+ *
+ * */
+function add_save() {
+    var label_name = $('#label_name').val(),
+    task_type = $('#task_type').val(),
+    // task_status = $('#task_status').val(),
+    model_id = $('#model_id').val();
+    if (!label_name) {
+        showmsg('请输入目标组名称');
+        return false;
+    }
+    if (!task_type) {
+        showmsg('请输入任务类型');
+        return false;
+    }
+    if (!model_id) {
+        showmsg('请输入模型ID');
+        return false;
+    }
+    var _data = {label_name: label_name, task_type: task_type,model_id:model_id};
+    $.ajax({
+        url:site_url + '/model/task?action=add',
+        data:JSON.stringify(_data),
+        type:'post',
+        dataType: 'json',
+        processData: false,
+        contentType: 'application/json;charset=utf-8',
+        success: function(){
+            $('.pop').hide();
+            $('.pop_bg').hide();
+            to_find();
+        },
+        error:function(){
+            $('.pop').hide();
+            $('.pop_bg').css('display','none')
+        }
+    })
+}
+/**
+ *
+ * 初始化列表
+ *
+ * */
+function to_find() {
+    // var _vulscans = $('#vulscans').val();
+    var _data = {},
+    _type = 'post';
+    $.ajax({
+        url: site_url + '/node?action=status',
+        data: JSON.stringify(_data),
+        type: _type,
+        dataType: 'json',
+        processData: false,
+        contentType: 'application/json;charset=utf-8',
+        success: function (result) {
+            // if (_start == 1) {
+            //     //第1次设置漏洞列表
+            //     _list = result.iplist;
+            //     var obj = document.getElementById('vulscans');
+            //     obj.length=1;
+            //     for(var i=0, l=res.length; i<l; i++){
+            //         obj.add(new Option(res[i].catname,res[i].id));
+            //     }
+            //     form_render();
+            //     _start = 0;
+            // }
+            // _record_count = result.real_count;
+            if(result.status === "success"){
+                console.log(result)
+                var _list = result.info.data;
+                $('#content').html('');
+                var valueArr =[]
+                var keyArr=[]
+                for(var key in _list){
+                    valueArr.push(_list[key])
+                    keyArr.push(key).res
+                }
+                var keyHtml=""
+                for(j=0; j<keyArr.length; j++){
+                    _row1 = keyArr[j];
+                    keyHtml+='<td>' + _row1 + '</td>'
+                }
+                var valueHtml=""
+                var task_id=""
+                valueArr.forEach(function (item,index){
+                    task_id+= item.task_id
+                })
+               
+                for(i=0; i<valueArr.length; i++) {
+                    _row = valueArr[i];
+                    key_row = keyArr[i];
+                    // var times = new Date(parseInt(_list[i].create_time) * 1000).toLocaleString().replace(/:\d{1,2}$/,' ');
+                    valueHtml+= '<tr>'
+                    valueHtml+= '<td>'+key_row+'</td>'
+                    valueHtml+= '<td>' + _row.node_status.ip + '</td>'
+                    valueHtml+= '<td>' + _row.node_status.load.cpu + '</td>'
+                    valueHtml+= '<td>' + _row.node_status.load.mem + '</td>'
+                    valueHtml+= '<td>' + task_id + '</td>'
+                    valueHtml+= '<td>' + _row.status + '</td>'
+                    valueHtml+= '</tr>'
+                }
+                $('#content').html(valueHtml);
+            }
+            
+            
+            // $('.fz').html('共' + _record_count + '条记录');
+            // _maxpage = Math.ceil(_record_count / _pagesize);
+            // $(".pages").createPage({
+            //     pageNum: _maxpage,
+            //     current: _page,
+            //     backfun: function(e) {
+            //         console.log(e);//回调
+            //         to_find(e.current);
+            //     }
+            // });
+            // form_render();
+        }
+    })
+}
+
+/**
+ *
+ * 编辑或者为更新
+ */
+function edit(id) {
+    var _obj = $('.data_' + id);
+    $('#id_edit').val(id);
+    $('#label_name_edit').val($(_obj).find('td:eq(4)').html() );
+    $('#task_type_edit').val($(_obj).find('td:eq(5)').html() );
+    $('#model_id_edit').val($(_obj).find('td:eq(6)').html() );
+    $('.pop_bg').show();
+    $('.pop_editDkz').show();
+}
+function edit_save() {
+    var id_edit = $('#id_edit').val(),
+    label_name_edit = $('#label_name_edit').val(),
+    task_type_edit = $('#task_type_edit').val(),
+    model_id_edit = $('#model_id_edit').val(),
+    _data = {id: id_edit, label_name: label_name_edit, task_type: task_type_edit, model_id: model_id_edit};
+    $.ajax({
+        url:site_url + '/model/task?action=update',
+        data:JSON.stringify(_data),
+        type:'post',
+        dataType: 'json',
+        processData: false,
+        contentType: 'application/json;charset=utf-8',
+        success: function(){
+            to_find();
+            $('.pop').hide();
+            $('.pop_bg').hide();
+        },
+    })
+}
+/**
+ *
+ * 删除按钮
+ *
+ */
+function del(obj){
+    $(".p_tit").html('是否删除');
+    $('#confirm').html('确认');
+    $('.pop_bg').show();
+    $('.confirmDel').show();
+    //确认删除
+    var _data = {id:obj};
+    $('#confirm').on('click',function () {
+        $.ajax({
+            url:site_url + '/model/task?action=rm',
+            data:JSON.stringify(_data),
+            type:'post',
+            dataType: 'json',
+            processData: false,
+            contentType: 'application/json;charset=utf-8',
+            success: function(){
+                to_find();
+                $('.pop').hide();
+                $('.pop_bg').hide();
+            },
+        });
+    });
+}
+//取消按钮
+function cancel(){
+    $('.pop_bg').hide();
+    $('.confirmDel').hide();
+}
+
+/***
+ *
+ * 运行
+ */
+function start(obj){
+    //运行
+    var _data = {id:obj};
+    $.ajax({
+        url:site_url + '/model/task?action=run',
+        data:JSON.stringify(_data),
+        type:'post',
+        dataType: 'json',
+        processData: false,
+        contentType: 'application/json;charset=utf-8',
+        success: function(){
+            to_find();
+            alert(已开始运行);
+        },
+    });
+}
+/***
+ *
+ * 暂停运行
+ */
+function suspend(obj){
+    var _data = {task_id:obj};
+    $.ajax({
+        url:site_url + '/model/task?action=stop',
+        data:JSON.stringify(_data),
+        type:'post',
+        dataType: 'json',
+        processData: false,
+        contentType: 'application/json;charset=utf-8',
+        success: function(){
+            to_find();
+            alert(已暂停运行);
+        },
+    });
+}
+/***
+ *
+ * 恢复运行
+ */
+function refresh(obj){
+    var _data = {task_id:obj};
+    $.ajax({
+        url:site_url + '/model/task?action=resume',
+        data:JSON.stringify(_data),
+        type:'post',
+        dataType: 'json',
+        processData: false,
+        contentType: 'application/json;charset=utf-8',
+        success: function(){
+            to_find();
+            alert(已恢复运行);
+        },
+    });
+}
+/***
+ *
+ * 终止运行
+ */
+function termination(obj){
+    var _data = {task_id:obj};
+    $.ajax({
+        url:site_url + '/model/task?action=kill',
+        data:JSON.stringify(_data),
+        type:'post',
+        dataType: 'json',
+        processData: false,
+        contentType: 'application/json;charset=utf-8',
+        success: function(){
+            to_find();
+            alert(已终止运行);
+        },
+    });
+}
+$(function(){
+    to_find();
+    //监听输入框输入并进行搜索
+    $("#find_key").on("input",function(e){
+        var _key = $('#find_key').val();
+        to_find(_key);
+    });
+})
+</script>
+</body>
+</html>

@@ -1,0 +1,288 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="layui/css/layui.css">
+<link rel="stylesheet" href="css/style.css">
+<title>漏洞扫描</title>
+</head>
+
+<body class="layui-layout-body">
+<div class="layui-layout layui-layout-admin">
+    <div class="layui-header">{{ request.user.username }}</div>
+
+    <div class="layui-side">
+        <div class="layui-side-scroll">
+        </div>
+    </div>
+    <div class="layui-body">
+        <div class="container">
+            <div class="pub_tit">
+                <span class="tit">漏洞扫描</span>
+            </div>
+            <div class="port_main">
+                <form id="form_post">
+                    <div class="port_form layui-form">
+                    <div class="row clearfix">
+                        <span class="tit">
+                            <img src="images/icon_37.png" alt="" class="icon"/>任务名称
+                        </span>
+                        <div class="info">
+                            <div class="s_select w100">
+                                <select name="poctask_name" id="poctask_name">
+                                    <option value="">请选择</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row clearfix">
+                        <span class="tit">
+                            <img src="images/icon_30.png" alt="" class="icon"/>漏洞侦测插件
+                        </span>
+                        <div class="info">
+                            <div class="item">
+                                <span class="aimZdyBtn">
+                                    <input type="radio" name="poc_type" value="1" title="自定义目标" checked="" class="itemChoose1">
+                                </span>
+                                <span class="aimXzBtn">
+                                    <input type="radio" name="poc_type" value="0" title="选择已有目标组" class="itemChoose2">
+                                </span>
+                            </div>
+                            <div class="aim_zdy">
+                                <div class="item">
+                                    <textarea name="poc_data" class="ipt textarea text_aim" placeholder="可以输入IP地址、域名&#13;&#10;多个目标用换行分隔，如：&#13;&#10;192.168.1.1-192.168.2.2&#13;192.168.3.3-192.37.39.39&#10;192.168.1.1-255&#13;&#10;192.168.1.*&#13;&#10;192.168.*.*&#13;&#10;www.abc.com"></textarea>
+                                </div>
+                                <div class="item tips">
+                                    <a href="#" class="ts fr">说明</a>
+                                </div>
+                            </div>
+                            <div class="aim_xz" style="display:none;">
+                                <div class="item plug_drop">
+                                    <div class="pub_search">
+                                        <input type="text" class="ipt ipt_txt find_key" placeholder="输入关键字，按下回车键搜索">
+                                    </div>
+                                    <div class="plug_btns">
+                                        <span class="btn">
+                                            <input type="checkbox" name="" lay-skin="primary" lay-filter="allChoose" title="全选">
+                                        </span>
+                                        <span class="btn">
+                                            <input type="checkbox" name="" lay-skin="primary" lay-filter="clearChoose" title="清空">
+                                        </span>
+                                    </div>
+                                    <div class="plug_list">
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row clearfix">
+                        <span class="tit">
+                            <img src="images/icon_32.png" alt="" class="icon"/>类型
+                        </span>
+                        <div class="info clearfix">
+                            <div class="group">
+                                <input type="radio" name="task_type" value="real_time" title="即时任务" checked="">
+                            </div>
+                            <div class="group">
+                                <input type="radio" name="task_type" value="cron" title="定时任务" >
+                                <div class="datebox">
+                                    <input type="text" class="ipt_txt ipt ipt_date" id="date" placeholder="2019/06-06 14:45:45">
+                                </div>
+                            </div>
+                            <div class="group last">
+                                <input type="radio" name="task_type" value="period" title="周期任务" >
+                                <div class="s_select">
+                                    <select id="time">
+                                        <option value="4">4</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="ad_setting">
+                        <div class="row clearfix">
+                            <span class="tit"></span>
+                            <div class="info">
+                                <a href="#" class="set_btn">高级配置</a>
+                            </div>
+                        </div>
+                    </div>
+                    <input type="button" value="添加" class="ad_submit" onclick="$('#form_post').submit()">
+                </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="js/jquery-1.8.3.min.js"></script>
+<script src="layui/layui.js"></script>
+<script src="js/common.js" charset="utf-8"></script>
+<script>
+    var login_name = '{{ requesr.user.username }}';
+layui.use(['upload','form','laydate'], function(){
+var form = layui.form
+,layer = layui.layer
+,layedit = layui.layedit
+,laydate = layui.laydate
+,upload = layui.upload;
+
+});
+function check_restore(){
+    layui.use(['form'], function() {
+        var form = layui.form;
+
+        form.on('checkbox(allChoose)', function (data) {
+            var child = $(data.elem).parents('.plug_btns').siblings('.plug_list').find('li input[type="checkbox"]');
+            child.each(function (index, item) {
+                item.checked = data.elem.checked;
+            });
+            form.render('checkbox');
+        });
+
+        form.on('checkbox(itemChoose)', function (data) {
+            var sib = $(data.elem).parents('.plug_list').find('li input[type="checkbox"]:checked').length;
+            var total = $(data.elem).parents('.plug_list').find('li input[type="checkbox"]').length;
+            if (sib == total) {
+                $(data.elem).parents('.plug_list').siblings('.plug_btns').find('.allChoose input[type="checkbox"]').prop("checked", true);
+                form.render();
+            } else {
+                $(data.elem).parents('.plug_list').siblings('.plug_btns').find('allChoose input[type="checkbox"]').prop("checked", false);
+                form.render();
+            }
+        });
+
+        form.on('checkbox(clearChoose)', function (data) {
+            var child = $(data.elem).parents('.plug_btns').siblings('.plug_list').find('li input[type="checkbox"]:checked');
+            child.prop("checked", false);
+            form.render('checkbox');
+        });
+    });
+}
+$('body').on('click','.aimZdyBtn',function(){
+    $(this).parents('.info').find('.aim_zdy').show();
+    $(this).parents('.info').find('.aim_xz').hide();
+});
+$('body').on('click','.aimXzBtn',function(){
+    $(this).parents('.info').find('.aim_zdy').hide();
+    $(this).parents('.info').find('.aim_xz').show();
+});
+
+$('body').on('click','.portZdyBtn',function(){
+    $(this).parents('.info').find('.port_zdy').show();
+    $(this).parents('.info').find('.port_xz').hide();
+});
+$('body').on('click','.portXzBtn',function(){
+    $(this).parents('.info').find('.port_zdy').hide();
+    $(this).parents('.info').find('.port_xz').show();
+});
+_left_li = 'item_3';
+var _url = site_url + 'vulscan';
+var _list1, _list2;
+/**
+ * 获取任务列表和目标组
+ */
+function get_types() {
+    $.ajax({
+        url: _url,
+        type: 'get',
+        dataType: 'json',
+        success: function(res) {
+            $('.lists_1').html('');
+            _list1 = res.list1.list;
+
+            var obj = document.getElementById('poctask_name');
+            obj.length = 1;
+            console.log(_list1);
+            for (var i = 0, l = _list1.length; i < l; i++) {
+                obj.add(new Option(_list1[i].pocname, _list1[i].pocid));
+            }
+            _list2 = res.list2.list;
+            for(var i=0, l=_list2.length; i<l; i++){
+                $('.plug_list').append('<li>' +
+                    '<input type="checkbox" name="poc_data_id[]" value="' + _list2[i].pocgroupid + '" lay-skin="primary" title="'+_list2[i].pocgroup+'" lay-filter="itemChoose">' + '</li>');
+            }
+            form_render();
+            check_restore();
+        }
+    })
+}
+
+$(function(){
+    get_types();
+    $('#form_post').submit(function(){
+        var _data = formser('form_post');
+        if (!_data.poctask_name) {
+            showmsg('请选择任务', 0);
+            return false;
+        }
+        if (_data.poc_type == 1) {
+            var _target_ip = $('#poc_data').val();
+            if (!_target_ip) {
+                showmsg('请输入IP地址、域名', 0);
+                return false;
+            } else {
+                delete _data['poc_data_id[]'];
+            }
+        } else {
+            if (!_data['poc_data_id[]']) {
+                showmsg('请选择任务目标组', 0);
+                return false;
+            } else {
+                _data.poc_data = _data['poc_data_id[]'];
+                delete _data['poc_data_id[]'];
+            }
+        }
+        if (_data.task_type == 'cron') {
+            var _date = $('#date').val();
+            if (!_date) {
+                showmsg('请选择执行时间', 0);
+                return false;
+            } else {
+                _data.time = _date;
+            }
+        }
+        if (_data.task_type == 'period') {
+            var _date = $('#time').val();
+            if (!_date) {
+                showmsg('请选择周期', 0);
+                return false;
+            } else {
+                _data.time = _date;
+            }
+        }
+        $.ajax({
+            type: 'post',
+            data: _data,
+            url: _url,
+            dataType: 'json',
+            success: function (res) {
+                showmsg(res.msg, 0);
+                if (res.status == 200) {
+                    setTimeout("location.href = 'task.html'",1500);
+                }
+            }
+        })
+        return false;
+    })
+
+    $('.find_key').bind('keyup', function(event) {
+        if (event.keyCode == "13") {
+            var _key = $(this).val();
+            $('.plug_list').html('');
+            for(var i=0, l=_list2.length; i<l; i++){
+                if (!_key || _list2[i].pocgroup.indexOf(_key) >= 0) {
+                    $('.plug_list').append('<li>' +
+                        '<input type="checkbox" name="poc_data_id[]" value="' + _list2[i].pocgroupid + '" lay-skin="primary" title="' + _list2[i].pocgroup + '" lay-filter="itemChoose">' + '</li>');
+                }
+            }
+            form_render();
+        }
+    });
+})
+
+</script>
+</body>
+</html>

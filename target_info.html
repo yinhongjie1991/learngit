@@ -1,0 +1,265 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="layui/css/layui.css">
+<link rel="stylesheet" href="css/style.css">
+<title>目标详情</title>
+</head>
+
+<body class="layui-layout-body">
+<div class="layui-layout layui-layout-admin">
+    <div class="layui-header">
+    </div>
+
+    <div class="layui-side">
+        <div class="layui-side-scroll">
+        </div>
+    </div>
+    <div class="layui-body">
+        <div class="container layui-form">
+            <div class="pub_tit">
+                <span class="tit">目标详情</span>
+            </div>
+            <div class="user_main">
+                <!--默认展示部分-->
+                <div class="default_display">
+                    <div class="pub_topbar clearfix">
+                        <div class="pub_search fl clearfix">
+                            <input type="text" class="ipt ipt_txt" placeholder="输入IP、域名、软件名称、设备类型或品牌等" />
+                        </div>
+                        <button class="ipt search_btn fl adSearchBtn">高级搜索</button>
+                        <button class="btn fr mt8" onclick="to_export(1)">导出结果</button>
+                    </div>
+                </div>
+                <!--高级搜索部分-->
+                <div class="advanced_search">
+                    <div class="pub_topbar clearfix">
+                        <button class="ipt search_btn fl defaultSearchBtn">普通搜索</button>
+                        <button class="btn fr mt8" onclick="to_export(2)">导出结果</button>
+                    </div>
+                    <form id="form_post">
+                        <div class="ad_search clearfix layui-form">
+                            <li class="item">
+                                <span class="tit">任务名称</span>
+                                <div class="info">
+                                    <div class="s_select">
+                                        <select name="task_id" id="task_id">
+                                            <option value="">请选择</option>
+                                        </select>
+                                    </div>
+
+                                </div>
+                            </li>
+                            <li class="item">
+                                <span class="tit">IP地址</span>
+                                <div class="info">
+                                    <input type="text" class="ipt ipt_txt" name="ip_info" placeholder=""/>
+                                </div>
+                            </li>
+                            <li class="item">
+                                <span class="tit">端口</span>
+                                <div class="info">
+                                    <input type="text" class="ipt ipt_txt" name="port_num" placeholder=""/>
+                                </div>
+                            </li>
+                            <li class="item">
+                                <span class="tit">端口组件</span>
+                                <div class="info">
+                                    <div class="s_select">
+                                        <select name="port_service" id="port_service">
+                                            <option value="">请选择</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </li>
+                            <li class="item">
+                                <span class="tit">操作系统</span>
+                                <div class="info">
+                                    <div class="s_select">
+                                        <select name="os_type" id="os_type">
+                                            <option value="">请选择</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </li>
+                            <li class="item">
+                                <span class="tit">软件</span>
+                                <div class="info">
+                                    <input type="text" class="ipt ipt_txt" placeholder=""/>
+                                </div>
+                            </li>
+                            <li class="item">
+                                <span class="tit">软件版本</span>
+                                <div class="info">
+                                    <input type="text" class="ipt ipt_txt" placeholder=""/>
+                                </div>
+                            </li>
+                            <li class="item">
+                                <span class="tit">Banner</span>
+                                <div class="info">
+                                    <input type="text" class="ipt ipt_txt" name="banner" placeholder=""/>
+                                </div>
+                            </li>
+                        </div>
+                        <input type="submit" value="搜索" class="ipt ad_submit"/>
+                    </form>
+                </div>
+
+                <!--搜索结果-->
+                <div class="search_result">
+                    搜索到目标数量  约&nbsp;<em class="c_yellow real_count">2</em>
+                </div>
+                <!--搜索列表-->
+                <div class="" id="content">
+
+                </div>
+                <div class="pagelist">
+                    <span class="fz"></span>
+                    <div class="pages fr">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="js/jquery-1.8.3.min.js"></script>
+<script src="layui/layui.js"></script>
+<script src="js/common.js" charset="utf-8"></script>
+<script src="js/zxf_page.js" charset="utf-8"></script>
+<script>
+layui.use(['form', 'upload', 'laydate'], function(){
+var form = layui.form
+,layer = layui.layer
+,layedit = layui.layedit
+,laydate = layui.laydate
+,upload = layui.upload;
+
+});
+
+_left_li = 'item_6';
+_url = site_url + 'targetinfo';
+_star = 1;
+$(function () {
+    to_find(1, '');
+
+    $('#form_post').submit(function () {
+        to_find(1, 'advance');
+        return false;
+    });
+});
+
+function to_export(t) {
+    if (t==1) {
+        //普通
+        _data = {'action': 'export'};
+        var _keyword = $('.ipt_txt').val();
+        if (_keyword) {
+            _data.keywork = _keyword;
+        }
+    } else {
+        _data = $('#form_post').serialize();
+        _data += '&action=export';
+    }
+    $.post(_url,_data, function (res,status) {
+        showmsg(res.msg);
+    })
+}
+
+function to_find(_page, _action) {
+    var _keyword = $('.ipt_txt').val();
+    var _type = 'get';
+    var _data = {page: _page};
+    if (_keyword) {
+        _type = 'post';
+        _data.action = _action;
+        _data.keyword = _keyword;
+    }
+    if (_action == 'advance') {
+        _type = 'post';
+        _data = $('#form_post').serialize();
+        _data += '&page=' + _page + '&action=' + _action;
+    }
+    console.log(_data);
+    $.ajax({
+        url:_url,
+        data: _data,
+        type: _type,
+        dataType: 'json',
+        success:function (res, status) {
+            _list1 = res.target_info;
+            //工程JSON
+            _list2 = res.project_json;
+            //端口组件JSON
+            _list3 = res.advance_json;
+            //操作系统JSON
+            _list4 = res.os_json;
+
+            $('#content').html('');
+            _record_count = _list1.real_count;
+            $('.real_count').html(_record_count);
+            for (i=0; i<_list1.list.length; i++) {
+                _data = _list1.list[i];
+                _html = '<div class="aim_module" data-id="' + _data['id'] +'">\n' +
+                    '<div class="topbox">\n' +
+                    _data['address'] + '\n' +
+                    '<span class="date fr">'+_data['start_time']+'</span>\n' +
+                    '</div>\n' +
+                    '<div class="botbox">\n' +
+                    '<div class="t_tag">\n' +
+                    '<em>'+_data['project']+'</em>\n' +
+                    '<em>'+_data['ostype']+'</em>\n' +
+                    '</div>\n' +
+                    '<div class="details">\n';
+                for (j=0;j<_data['ports'].length;j++) {
+                    _html += '<li class="item">\n' +
+                        '<em class="num">' + (_data['ports'][j]['port'] ? _data['ports'][j]['port'] : '') +'</em>\n' +
+                        '<em class="ftp">'+ (_data['ports'][j]['service'] ? _data['ports'][j]['service'] : '') +'</em>\n' +
+                        '<em class="fz">'+ (_data['ports'][j]['banner'] ? _data['ports'][j]['banner'] : '') +'</em>\n' +
+                        '</li>\n';
+                }
+                _html += '</div>\n' +
+                    '<div class="banner">\n' +
+                    '<span class="wz">banner信息</span>\n' +
+                    '</div>\n' +
+                    '</div>\n' +
+                    '</div>';
+                $('#content').append(_html);
+            }
+            _maxpage = Math.ceil(_list1.real_count / _pagesize);
+
+            $('.pagelist .fz').html('共' + _record_count + '条记录');
+            $(".pages").createPage({
+                pageNum: _maxpage,
+                current: _page,
+                backfun: function(e) {
+                    to_find(e.current);
+                }
+            });
+            form_render();
+
+            if (_star == 1) {
+                _star = 0;
+                var obj = document.getElementById('task_id');
+                obj.length = 1;
+                for (var i = 0, l = _list2.list.length; i < l; i++) {
+                    obj.add(new Option(_list2.list[i].project_name, _list2.list[i].project_id));
+                }
+                var obj = document.getElementById('port_service');
+                obj.length = 1;
+                for (var i = 0, l = _list3.list.length; i < l; i++) {
+                    obj.add(new Option(_list3.list[i].service_name, _list3.list[i].service_name));
+                }
+                var obj = document.getElementById('os_type');
+                obj.length = 1;
+                for (var i = 0, l = _list4.list.length; i < l; i++) {
+                    obj.add(new Option(_list4.list[i].os_name, _list4.list[i].os_name));
+                }
+            }
+        }
+    })
+}
+</script>
+</body>
+</html>

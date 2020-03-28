@@ -1,0 +1,252 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="layui/css/layui.css">
+<link rel="stylesheet" href="css/style.css">
+<title>漏洞列表</title>
+</head>
+
+<body class="layui-layout-body">
+<div class="layui-layout layui-layout-admin">
+    <div class="layui-header">
+
+    </div>
+
+    <div class="layui-side">
+        <div class="layui-side-scroll">
+        </div>
+    </div>
+    <div class="layui-body">
+        <div class="container bg_bug">
+            <div class="bug_top clearfix">
+                <li class="item it_1 clearfix">
+                    <div class="smbox">
+                        <img src="images/icon_24.png" alt="" class="icon"/>
+                    </div>
+                    <div class="info">
+                        <p class="num">1019</p>
+                        <p class="fz">全部漏洞</p>
+                    </div>
+                </li>
+                <li class="item it_2 clearfix">
+                    <div class="smbox">
+                        <img src="images/icon_25.png" alt="" class="icon"/>
+                    </div>
+                    <div class="info">
+                        <p class="num">1019</p>
+                        <p class="fz">全部漏洞</p>
+                    </div>
+                </li>
+                <li class="item it_3 clearfix">
+                    <div class="smbox">
+                        <img src="images/icon_26.png" alt="" class="icon"/>
+                    </div>
+                    <div class="info">
+                        <p class="num">1019</p>
+                        <p class="fz">全部漏洞</p>
+                    </div>
+                </li>
+                <li class="item it_4 clearfix">
+                    <div class="smbox">
+                        <img src="images/icon_27.png" alt="" class="icon"/>
+                    </div>
+                    <div class="info">
+                        <p class="num">1019</p>
+                        <p class="fz">全部漏洞</p>
+                    </div>
+                </li>
+            </div>
+            <div class="bug_bottom">
+                <div class="pub_topbar clearfix layui-form">
+                    <div class="pub_search fl">
+                        <input type="text" id="find_key" class="ipt ipt_txt" placeholder="输入任务名或标签" />
+                    </div>
+                    <div class="pub_select fr">
+                        <select name="cat_id" id="cat_id">
+                            <option value="1">全部漏洞</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="layui-collapse bug_list" lay-accordion="">
+                    <div class="layui-colla-item">
+                        <div class="i_t clearfix layui-colla-title">
+                            <span class="title ellipsis">3S Network Camera弱密码漏洞</span>
+                            <div class="fr">
+                                <span class="level">
+                                    <em class="e_1"></em>
+                                    <em class="e_2"></em>
+                                    <em class=""></em>
+                                </span>
+                                <span class="date">2016/09/29</span>
+                            </div>
+                        </div>
+                        <div class="t_b layui-colla-content">
+                            <div class="row clearfix">
+                                <span class="tit">漏洞简介</span>
+                                <div class="info">
+                                    <div class="txt">漏洞CVE-2016-6415存在于思科IOS、思科IOS XE和思科IOS XR软件中的IKEv1数据包处理代码中，未经身份验证的远程攻击者可以利用这个漏洞获取到目标设备内存中的数据内容，而且这将有可能导致敏感信息的泄露。</div>
+                                </div>
+                            </div>
+                            <div class="row clearfix">
+                                <span class="tit">默认端口</span>
+                                <div class="info">
+                                    <div class="txt">500，4848，4500，848</div>
+                                </div>
+                            </div>
+                            <div class="row clearfix">
+                                <span class="tit">修复建议</span>
+                                <div class="info">
+                                    <div class="txt">官方方案：到官网上下载最新固件（http://tools.cisco.com/security/center/select）<br>
+                                        临时方案：暂无</div>
+                                </div>
+                            </div>
+                            <div class="row clearfix">
+                                <span class="tit">CVE ID</span>
+                                <div class="info">
+                                    <div class="txt">CVE-2016-6415</div>
+                                </div>
+                            </div>
+                            <div class="row clearfix">
+                                <span class="tit">CNVN ID</span>
+                                <div class="info">
+                                    <div class="txt">
+
+                                    </div>
+                                </div>
+                            </div>
+                            <button class="button" onclick="location.href='vulscan_add.html'">新建漏洞扫描任务</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="pagelist">
+                    <span class="fz"></span>
+                    <div class="pages fr">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="js/jquery-1.8.3.min.js"></script>
+<script src="layui/layui.js"></script>
+<script src="js/common.js" charset="utf-8"></script>
+<script src="js/zxf_page.js" charset="utf-8"></script>
+<script>
+layui.use(['element', 'layer','form'], function(){
+var form = layui.form
+,layer = layui.layer
+,layedit = layui.layedit
+,laydate = layui.laydate
+,upload = layui.upload
+,element = layui.element
+
+  element.on('collapse(test)', function(data){
+
+  });
+
+});
+
+_left_li = 'item_1';
+$(function(){
+    $.ajax({
+        url: site_url + '/getCategory',
+        dataType: 'json',
+        success: function(res) {
+            var obj = document.getElementById('cat_id');
+            obj.length=1;
+            for(var i=0, l=res.length; i<l; i++){
+                obj.add(new Option(res[i].catname,res[i].id));
+            }
+        }
+    })
+})
+
+_url = site_url + 'upgrade';
+function to_find(_page) {
+    _data = {page: _page};
+    _type = 'get';
+    $.ajax({
+        url: _url,
+        data: _data,
+        type: _type,
+        dataType: 'json',
+        success: function (result) {
+            _record_count = result.real_count;
+            _list = result.lists;
+            $('#content').html('');
+            for(i=0; i<_list.length; i++) {
+                _row = _list[i];
+                _html = '<div class="layui-colla-item">\n' +
+                    '<div class="i_t clearfix layui-colla-title">\n' +
+                    '<span class="title ellipsis">' + _row['targetid'] + '</span>\n' +
+                    '<div class="fr">\n' +
+                    '    <span class="level">\n';
+                _html += '<em class="e_1"></em>\n';
+                if (_row['level_id'] > 1) {
+                    _html += '<em class="e_2"></em>\n';
+                }
+                if (_row['level_id'] > 2) {
+                    _html += '<em class="e_3"></em>\n';
+                }
+                _html += '<em class=""></em>\n' +
+                    '    </span>\n' +
+                    '    <span class="date">' + _row['targetid'] + '</span>\n' +
+                    '</div>\n' +
+                    '</div>\n' +
+                    '<div class="t_b layui-colla-content">\n' +
+                    '<div class="row clearfix">\n' +
+                    '    <span class="tit">漏洞简介</span>\n' +
+                    '    <div class="info">\n' +
+                    '        <div class="txt">' + _row['targetid'] + '</div>\n' +
+                    '    </div>\n' +
+                    '</div>\n' +
+                    '<div class="row clearfix">\n' +
+                    '    <span class="tit">默认端口</span>\n' +
+                    '    <div class="info">\n' +
+                    '        <div class="txt">' + _row['targetid'] + '</div>\n' +
+                    '    </div>\n' +
+                    '</div>\n' +
+                    '<div class="row clearfix">\n' +
+                    '    <span class="tit">修复建议</span>\n' +
+                    '    <div class="info">\n' +
+                    '        <div class="txt">' + _row['targetid'] + '</div>\n' +
+                    '    </div>\n' +
+                    '</div>\n' +
+                    '<div class="row clearfix">\n' +
+                    '    <span class="tit">CVE ID</span>\n' +
+                    '    <div class="info">\n' +
+                    '        <div class="txt">' + _row['targetid'] + '</div>\n' +
+                    '    </div>\n' +
+                    '</div>\n' +
+                    '<div class="row clearfix">\n' +
+                    '    <span class="tit">CNVN ID</span>\n' +
+                    '    <div class="info">\n' +
+                    '        <div class="txt">' + _row['targetid'] + '\n' +
+                    '        </div>\n' +
+                    '    </div>\n' +
+                    '</div>\n' +
+                    '<button class="button" onclick="location.href=\'vulscan_add.html\'">新建漏洞扫描任务</button>\n' +
+                    '</div>\n' +
+                    '                    </div>';
+                $('#content').append(_html);
+            }
+
+            $('.fz').html('共' + _record_count + '条记录');
+            _pagemax = Math.ceil(_record_count / _pagesize);
+            $(".pages").createPage({
+                pageNum: _pagemax,
+                current: _page,
+                backfun: function(e) {
+                    to_find(e.current);
+                }
+            });
+            form_render();
+        }
+    })
+}
+</script>
+</body>
+</html>

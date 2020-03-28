@@ -1,0 +1,156 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="layui/css/layui.css">
+<link rel="stylesheet" href="css/style.css">
+<title>测试系统状态</title>
+</head>
+
+<body class="layui-layout-body">
+<div class="layui-layout layui-layout-admin">
+    <div class="layui-header">
+</div>
+
+    <div class="layui-side">
+        <div class="layui-side-scroll">
+            <ul class="side_menu">
+                <li class="item item_1">
+                    <a href="#" class="tit">漏洞列表</a>
+                </li>
+                <li class="item item_2">
+                    <a href="#" class="tit">端口扫描</a>
+                </li>
+                <li class="item item_3">
+                    <a href="#" class="tit">漏洞扫描</a>
+                </li>
+                <li class="item item_4">
+                    <a href="#" class="tit">暴力破解</a>
+                </li>
+                <li class="item item_5">
+                    <a href="#" class="tit">任务管理</a>
+                </li>
+                <li class="item item_6">
+                    <a href="#" class="tit">目标详情</a>
+                </li>
+                <li class="item item_7">
+                    <a href="#" class="tit">导出管理</a>
+                </li>
+                <li class="item item_8">
+                    <a href="javascript:;" class="tit">模板管理</a>
+                    <div class="drop">
+                        <a href="#">目标组管理</a>
+                        <a href="#">端口组管理</a>
+                    </div>
+                </li>
+                <li class="item item_9">
+                    <a href="#" class="tit">大屏展示</a>
+                </li>
+                <li class="item item_10 cur">
+                    <a href="javascript:;" class="tit">系统管理</a>
+                    <div class="drop">
+                        <a href="#" class="this">系统状态</a>
+                        <a href="#">系统设置</a>
+                        <a href="#">用户管理</a>
+                        <a href="#">授权管理</a>
+                        <a href="#">日志管理</a>
+                        <a href="#">系统升级</a>
+                        <a href="#">关于</a>
+                        <a href="#">帮助</a>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="layui-body">
+        <div class="container layui-form">
+            <div class="pub_tit">
+                <span class="tit">系统状态</span>
+            </div>
+            <div class="system_main">
+                <div class="clearfix">
+                    <button class="system_test fr">测试系统状态</button>
+                </div>
+                <div class="wrap clearfix">
+                    <div class="system_l fl system_test_l">
+                        <li class="item clearfix">
+                            <span class="tit">网络：</span>
+                            <div class="info">
+                                <div class="row">
+                                    <span class="bar u_bar"><i style="width:60%"></i></span>
+                                    <em class="fz">836个</em>
+                                    <em class="ico up"></em>
+                                </div>
+                                <div class="row">
+                                    <span class="bar d_bar"><i style="width:30%"></i></span>
+                                    <em class="fz">1个</em>
+                                    <em class="ico down"></em>
+                                </div>
+                            </div>
+                        </li>
+                        <li class="item clearfix">
+                            <span class="tit">收发包数：</span>
+                            <div class="info">
+                                <div class="row">
+                                    <span class="bar u_bar"><i style="width:60%"></i></span>
+                                    <em class="fz">45.16kbytes/s</em>
+                                    <em class="ico up"></em>
+                                </div>
+                                <div class="row">
+                                    <span class="bar d_bar"><i style="width:30%"></i></span>
+                                    <em class="fz">0.7kbytes/s</em>
+                                    <em class="ico down"></em>
+                                </div>
+                            </div>
+                        </li>
+                    </div>
+                    <div class="system_r fr">
+                        <h6 class="title">系统使用CPU、内存及硬盘情况</h6>
+                        <div class="detail clearfix">
+                            <div class="item">
+                                <div class="chart">
+                                    <img src="images/img_02.png" alt="" />
+                                </div>
+                                <p class="font">CPU</p>
+                            </div>
+                            <div class="item">
+                                <div class="chart">
+                                    <img src="images/img_03.png" alt="" />
+                                </div>
+                                <p class="font">内存</p>
+                            </div>
+                            <div class="item">
+                                <div class="chart">
+                                    <img src="images/img_04.png" alt="" />
+                                </div>
+                                <p class="font">硬盘</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+<script src="js/jquery-1.8.3.min.js"></script>
+<script src="layui/layui.js"></script>
+<script src="js/common.js" charset="utf-8"></script>
+<script>
+layui.use(['form', 'upload', 'laydate'], function(){
+var form = layui.form
+,layer = layui.layer
+,layedit = layui.layedit
+,laydate = layui.laydate
+,upload = layui.upload;
+
+
+});
+</script>
+</body>
+</html>

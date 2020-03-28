@@ -1,0 +1,390 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="layui/css/layui.css">
+<link rel="stylesheet" href="css/style.css">
+<title>模板-目标组管理</title>
+</head>
+
+<body class="layui-layout-body">
+<div class="layui-layout layui-layout-admin">
+    <div class="layui-header">
+    </div>
+
+    <div class="layui-side">
+        <div class="layui-side-scroll">
+        </div>
+    </div>
+    <div class="layui-body">
+        <div class="container layui-form">
+            <div class="pub_tit">
+                <span class="tit">目标组管理</span>
+            </div>
+            <div class="user_main">
+                <div class="pub_topbar clearfix">
+                    <div class="pub_search fl">
+                        <input type="text" id="find_key" class="ipt ipt_txt find_key" placeholder="输入目标组名称" />
+                    </div>
+                    <button class="btn fr mt8 addMbz" onclick="addnew()">添加</button>
+                    <form id="uploadForm" enctype="multipart/form-data" method="POST">
+                        <input type="file" name="photo" id="file" value="" style="float: left;width: 400px;line-height: 28px;margin-top: 8px;">
+                        <input type="button" id="addHandle" class="btn fr mt8" onclick="postData();" value="上传列表" name="" style="margin-right: 10px">
+                        <div id="output" style="display: none"></div>
+                    </form>
+                </div>
+                <div class="pub_tablew">
+                    <table class="pub_table">
+                        <thead>
+                            <th>
+                                <input type="checkbox" name="" lay-skin="primary" lay-filter="allChoose">
+                            </th>
+                            <th>创建时间</th>
+                            <th>目标组id</th>
+                            <th>目标组名称</th>
+                            <th>目标组内容</th>
+                            <th>目标组文件地址</th>
+                            <th>操作</th>
+                        </thead>
+                        <tbody id="content">
+
+                        </tbody>
+                    </table>
+                </div>
+                <div class="pagelist">
+                    <span class="fz"></span>
+                    <div class="pages fr">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--添加目标组-->
+<div class="pop_bg"></div>
+<div class="pop pop_bp layui-form pop_bpMbz">
+    <h6 class="p_tit">添加目标组 <em class="close fr"></em></h6>
+    <div class="detail">
+        <div class="item">
+            <span class="tit">目标组名称</span>
+            <div class="info">
+                <input type="text" class="ipt ipt_txt" id="portname_add" placeholder="输入目标组名称"/>
+            </div>
+        </div>
+        <div class="item">
+            <span class="tit">目标组地址</span>
+            <div class="info">
+                <input type="text" class="ipt ipt_txt" id="portTargets_add" placeholder="输入目标组地址"/>
+            </div>
+        </div>
+        <div class="item">
+            <span class="tit">目标组信息</span>
+            <div class="info l_info">
+                <input type="text" class="ipt ipt_txt" id="targets_file_daa" disabled="disabled" placeholder="请输入目标组文件地址"/>
+            </div>
+        </div>
+        <button class="button" onclick="add_save()">确定添加</button>
+    </div>
+    <i class="z_ico z1"></i>
+    <i class="z_ico z2"></i>
+    <i class="z_ico z3"></i>
+    <i class="z_ico z4"></i>
+</div>
+
+<div class="pop pop_bp layui-form pop_editDkz">
+    <h6 class="p_tit">修改目标组 <em class="close fr"></em></h6>
+    <div class="detail">
+        <div class="item">
+            <span class="tit">目标组id</span>
+            <div class="info">
+                <input type="text" class="ipt ipt_txt" id="label_id" placeholder="输入目标组id"/>
+            </div>
+        </div>
+        <div class="item">
+            <span class="tit">目标组名称</span>
+            <div class="info">
+                <input type="text" class="ipt ipt_txt" id="label_name_edit" placeholder="输入目标组名称"/>
+            </div>
+        </div>
+        <div class="item">
+            <span class="tit">目标组内容</span>
+            <div class="info">
+                <input type="text" class="ipt ipt_txt" id="targets_edit" placeholder="输入目标组内容"/>
+            </div>
+        </div>
+        <div class="item">
+            <span class="tit">目标信息</span>
+            <div class="info l_info">
+                <input type="text" class="ipt ipt_txt" id="targets_file_edit" placeholder="输入目标组文件内容"/>
+                <!--<textarea name="" class="ipt textarea" id="ports_file_edit" placeholder="输入端口组文件内容"></textarea>-->
+            </div>
+        </div>
+        <button class="button" onclick="edit_save()">确定修改</button>
+    </div>
+    <i class="z_ico z1"></i>
+    <i class="z_ico z2"></i>
+    <i class="z_ico z3"></i>
+    <i class="z_ico z4"></i>
+</div>
+
+<div class="pop pop_bp layui-form confirmDel" style="height: 200px;width: 300px;margin: -100px 0 0 -150px;position: fixed; left: 50%; top: 50%;">
+    <h6 class="p_tit">是否删除 <em class="close fr"></em></h6>
+    <div class="detail">
+        <button class="button" style="float: left" id="confirm">确认</button>
+        <button class="button" style="float: right" onclick="cancel()">取消</button>
+    </div>
+    <i class="z_ico z1"></i>
+    <i class="z_ico z2"></i>
+    <i class="z_ico z3"></i>
+    <i class="z_ico z4"></i>
+</div>
+
+<script src="js/jquery-1.8.3.min.js"></script>
+<script src="layui/layui.js"></script>
+<script src="js/common.js" charset="utf-8"></script>
+<script src="js/zxf_page.js" charset="utf-8"></script>
+<script>
+layui.use(['form', 'upload', 'laydate'], function(){
+    var form = layui.form
+    ,layer = layui.layer
+    ,layedit = layui.layedit
+    ,laydate = layui.laydate
+    ,upload = layui.upload;
+
+    form.on('checkbox(allChoose)', function(data){
+        var child = $(data.elem).parents('table').find('tbody input[type="checkbox"]');
+        child.each(function(index, item){
+            item.checked = data.elem.checked;
+        });
+        form.render('checkbox');
+    });
+    form.on('checkbox(itemChoose)',function(data){
+        var sib = $(data.elem).parents('table').find('tbody input[type="checkbox"]:checked').length;
+        var total = $(data.elem).parents('table').find('tbody input[type="checkbox"]').length;
+        if(sib == total){
+            $(data.elem).parents('table').find('thead input[type="checkbox"]').prop("checked",true);
+            form.render();
+        }else{
+            $(data.elem).parents('table').find('thead input[type="checkbox"]').prop("checked",false);
+            form.render();
+        }
+    });
+
+});
+//上传
+$("#file").on('change',function () {
+    var file=document.getElementById("file").files[0];
+    var reader=new FileReader();
+    reader.readAsText(file);
+    reader.onload = function() {
+        if(reader.result) {
+            //显示文件内容
+            $("#output").html(reader.result);
+        }
+    };
+});
+function postData(){
+    var files = $('#file')[0].files[0].name;
+    var htmls = $("#output").html();
+    var formData = new FormData();
+    formData.append("upload_type",'targets');
+    formData.append("upload",$('#file')[0].files[0]);
+    $.ajax({
+        url:site_url + '/upload', /*接口域名地址*/
+        type:'post',
+        data: formData,
+        // async: true,
+        // cache: false,
+        contentType: false,
+        processData: false,
+        secureuri: false,
+        headers: {
+            Accept: "application/json"
+        },
+        success:function(data){
+            var obj = JSON.parse(data);
+            $("#targets_file_daa").val(obj.info.filename);
+        }
+    })
+}
+$("#portPorts_add").blur(function (){
+    if($(this).val()){
+        $("#ports_file_daa").attr("disabled", true);
+        $("#addHandle").attr("disabled", true );
+    }else{
+        $("#ports_file_daa").attr("disabled", false);
+        $("#addHandle").attr("disabled", false );
+    }
+})
+//添加判断
+if($("#targets_file_daa").val() != ''){
+    $("#portTargets_add").attr("disabled", true );
+    $("#addHandle").attr("disabled", true );
+}else{
+    $("#portTargets_add").attr("disabled", false );
+    $("#addHandle").attr("disabled", false );
+}
+if($("#targets_file_edit").val() != ''){
+    $("#targets_edit").attr("disabled", true );
+}else{
+    $("#targets_edit").attr("disabled", false );
+}
+/**初始化列表*/
+function to_find(_page) {
+    // var _key = $('#find_key').val();
+    var _data = {page: _page};
+    _type = 'post';
+    $.ajax({
+        url: site_url + '/policy/target?action=show',
+        data: JSON.stringify(_data),
+        type: _type,
+        dataType: 'json',
+        processData: false,
+        contentType: 'application/json;charset=utf-8',
+        success: function (result) {
+            // record_count = result.info.data.length;
+            _list = result.info.data;
+            $('#content').html('');
+            for(i=0; i<_list.length; i++) {
+                _row = _list[i];
+                var times = new Date(parseInt(_list[i].create_time) * 1000).toLocaleString().replace(/:\d{1,2}$/,' ');
+                $('#content').append('<tr class="data_' + _row['id'] + '">\n' +
+                    '                                <td>\n' +
+                    '                                    <input type="checkbox" name="ids[]" value="' + _row['id'] + '" lay-skin="primary" lay-filter="itemChoose">\n' +
+                    '                                </td>\n' +
+                    '                                <td>' + times + '</td>\n' +
+                    '                                <td>' + _row['id'] + '</td>\n' +
+                    '                                <td>' + _row['label_name'] + '</td>\n' +
+                    '                                <td>' + _row['targets'] + '</td>\n' +
+                    '                                <td>' + _row['targets_file'] + '</td>\n' +
+                    '                                <td>\n' +
+                    '                                    <a href="javascript:;" onclick="edit(\'' + _row['id'] + '\')" class="lk_ico edit"></a>\n' +
+                    '                                    <a href="javascript:;" onclick="del(\'' + _row['id'] + '\')" class="lk_ico del"></a>\n' +
+                    '                                </td>\n' +
+                    '                            </tr>');
+            }
+            //分页器
+            // $('.fz').html('共' + _record_count + '条记录');
+            // _maxpage = Math.ceil(_record_count / _pagesize);
+            // $(".pages").createPage({
+            //     pageNum: _maxpage,
+            //     current: _page,
+            //     backfun: function(e) {
+            //         console.log(e);//回调
+            //         to_find(e.current);
+            //     }
+            // });
+            form_render();
+
+        }
+    })
+}
+//添加属于新增，新增前弹出框内容应该为空
+function addnew() {
+    $('#portname_add').val('');
+    $('#portTargets_add').val('');
+    if($("#file").val() != ''){
+        $("#portTargets_add").attr("disabled", true);
+    }else{
+        $('#targets_file_daa').val('');
+        $("#portTargets_add").attr("disabled", false);
+    }
+}
+//增加项目组
+function add_save() {
+    var _portname = $('#portname_add').val();
+    _portTargets = $('#portTargets_add').val();
+    _portfile = $('#targets_file_daa').val();
+    if (!_portname) {
+        showmsg('请输入目标组名称');
+        return false;
+    }
+    var _data = {label_name: _portname, targets: _portTargets, targets_file: _portfile};
+    $.ajax({
+        url:site_url + '/policy/target?action=add',
+        data:JSON.stringify(_data),
+        type:'post',
+        dataType: 'json',
+        processData: false,
+        contentType: 'application/json;charset=utf-8',
+        success: function(){
+            $('.pop').hide();
+            $('.pop_bg').hide();
+            to_find();
+        },
+        error:function(){
+            $('.pop').hide();
+            $('.pop_bg').css('display','none')
+        }
+    })
+}
+
+//编辑
+function edit(id) {
+    var _obj = $('.data_' + id);
+    $('#label_id').val(id);
+    $('#label_name_edit').val($(_obj).find('td:eq(3)').html() );
+    $('#targets_edit').val($(_obj).find('td:eq(4)').html() );
+    $('#targets_file_edit').val($(_obj).find('td:eq(5)').html() );
+    $('.pop_bg').show();
+    $('.pop_editDkz').show();
+}
+function edit_save() {
+    _label_id = $('#label_id').val();
+    _label_name_edit = $('#label_name_edit').val();
+    _targets_edit = $('#targets_edit').val();
+    _targets_file_edit = $('#targets_file_edit').val();
+    _data = {id: _label_id, label_name: _label_name_edit, targets: _targets_edit, targets_file: _targets_file_edit};
+    $.ajax({
+        url:site_url + '/policy/port?action=update',
+        data:JSON.stringify(_data),
+        type:'post',
+        dataType: 'json',
+        processData: false,
+        contentType: 'application/json;charset=utf-8',
+        success: function(){
+            to_find();
+            $('.pop').hide();
+            $('.pop_bg').hide();
+        },
+    })
+}
+//删除
+function del(obj){
+    $('.pop_bg').show();
+    $('.confirmDel').show();
+    //确认删除
+    var _data = {id:obj};
+    $('#confirm').on('click',function () {
+        $.ajax({
+            url:site_url + '/policy/target?action=rm',
+            data:JSON.stringify(_data),
+            type:'post',
+            dataType: 'json',
+            processData: false,
+            contentType: 'application/json;charset=utf-8',
+            success: function(){
+                to_find();
+                $('.pop').hide();
+                $('.pop_bg').hide();
+            },
+        });
+    });
+}
+//取消按钮
+function cancel(){
+    $('.pop_bg').hide();
+    $('.confirmDel').hide();
+}
+$(function(){
+    to_find();
+    //监听输入框输入并进行搜索
+    $("#find_key").on("input",function(e){
+        var _key = $('#find_key').val();
+        to_find(_key);
+    });
+})
+</script>
+</body>
+</html>

@@ -1,0 +1,306 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="layui/css/layui.css">
+<link rel="stylesheet" href="css/style.css">
+<title>模板-爆破组管理</title>
+</head>
+
+<body class="layui-layout-body">
+<div class="layui-layout layui-layout-admin">
+    <div class="layui-header">
+    </div>
+
+    <div class="layui-side">
+        <div class="layui-side-scroll">
+        </div>
+    </div>
+    <div class="layui-body">
+        <div class="container layui-form">
+            <div class="pub_tit">
+                <span class="tit">爆破组管理</span>
+            </div>
+            <div class="user_main">
+                <div class="pub_topbar clearfix">
+                    <div class="pub_search fl">
+                        <input type="text" class="ipt ipt_txt find_key" id="find_key" placeholder="输入爆破组名称" />
+                    </div>
+                    <button class="btn fr mt8 bpBtn">添加</button>
+                </div>
+                <div class="pub_tablew">
+                    <table class="pub_table">
+                        <thead>
+                            <th>
+                                <input type="checkbox" name="" lay-skin="primary" lay-filter="allChoose">
+                            </th>
+                            <th>爆破组名称</th>
+                            <th>详细信息</th>
+                            <th>用户名</th>
+                            <th>操作</th>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <input type="checkbox" name="" lay-skin="primary" lay-filter="itemChoose">
+                                </td>
+                                <td>演示端口组</td>
+                                <td>201 21 80</td>
+                                <td>admin</td>
+                                <td>
+                                    <a href="javascript:;" class="lk_ico edit"></a>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="pagelist">
+                    <span class="fz"></span>
+                    <div class="pages fr">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--添加爆破组-->
+<div class="pop_bg"></div>
+<div class="pop pop_bp layui-form pop_bpW">
+    <h6 class="p_tit">添加爆破组 <em class="close fr"></em></h6>
+    <div class="detail">
+        <div class="item">
+            <span class="tit">爆破组名称</span>
+            <div class="info">
+                <input type="text" class="ipt ipt_txt" id="baoname_add" placeholder="输入爆破组名称"/>
+            </div>
+        </div>
+        <div class="item">
+            <span class="tit">IP地址信息</span>
+            <div class="info l_info">
+                <div class="plug_list">
+                   <li>
+                       <input type="checkbox" name="ss" lay-skin="primary" title="Cisco CVE-2016-6415 vpn信息漏洞漏洞" lay-filter="itemChoose" checked="">
+                   </li>
+                   <li>
+                       <input type="checkbox" name="ss" lay-skin="primary" title="Cisco CVE-2016-6415 vpn信息漏洞漏洞" lay-filter="itemChoose" >
+                   </li>
+                </div>
+            </div>
+        </div>
+        <button class="button" onclick="add_save()">确定添加</button>
+    </div>
+    <i class="z_ico z1"></i>
+    <i class="z_ico z2"></i>
+    <i class="z_ico z3"></i>
+    <i class="z_ico z4"></i>
+</div>
+
+<div class="pop pop_bp layui-form pop_editDkz">
+    <h6 class="p_tit">修改爆破组 <em class="close fr"></em></h6>
+    <div class="detail">
+        <div class="item">
+            <span class="tit">爆破组名称</span>
+            <div class="info">
+                <input type="text" class="ipt ipt_txt" id="baoname_edit" placeholder="输入爆破组名称"/>
+            </div>
+        </div>
+        <div class="item">
+            <span class="tit">IP地址信息</span>
+            <div class="info l_info">
+                <div class="plug_list">
+                   <li>
+                       <input type="checkbox" name="ss" lay-skin="primary" title="Cisco CVE-2016-6415 vpn信息漏洞漏洞" lay-filter="itemChoose" checked="">
+                   </li>
+                   <li>
+                       <input type="checkbox" name="ss" lay-skin="primary" title="Cisco CVE-2016-6415 vpn信息漏洞漏洞" lay-filter="itemChoose" >
+                   </li>
+                </div>
+            </div>
+        </div>
+        <button class="button" onclick="edit_save()">确定修改</button>
+    </div>
+    <i class="z_ico z1"></i>
+    <i class="z_ico z2"></i>
+    <i class="z_ico z3"></i>
+    <i class="z_ico z4"></i>
+</div>
+
+
+
+<script src="js/jquery-1.8.3.min.js"></script>
+<script src="layui/layui.js"></script>
+<script src="js/common.js" charset="utf-8"></script>
+<script src="js/zxf_page.js" charset="utf-8"></script>
+<script>
+layui.use(['form', 'upload', 'laydate'], function(){
+var form = layui.form
+,layer = layui.layer
+,layedit = layui.layedit
+,laydate = layui.laydate
+,upload = layui.upload;
+
+form.on('checkbox(allChoose)', function(data){
+    var child = $(data.elem).parents('table').find('tbody input[type="checkbox"]');
+    child.each(function(index, item){
+        item.checked = data.elem.checked;
+    });
+    form.render('checkbox');
+});
+form.on('checkbox(itemChoose)',function(data){
+    var sib = $(data.elem).parents('table').find('tbody input[type="checkbox"]:checked').length;
+    var total = $(data.elem).parents('table').find('tbody input[type="checkbox"]').length;
+    if(sib == total){
+        $(data.elem).parents('table').find('thead input[type="checkbox"]').prop("checked",true);
+        form.render();
+    }else{
+        $(data.elem).parents('table').find('thead input[type="checkbox"]').prop("checked",false);
+        form.render();
+    }
+});
+
+
+});
+_left_li = 'item_8';
+_left_menu_at = 'bao';
+
+
+_url = site_url + 'bao/';
+var _edit_id = 0;
+var _start = 1;
+function to_find(_page) {
+    var _key = $('#find_key').val();
+    _data = {page: _page};
+    _type = 'get';
+    if (_key) {
+        _type = 'post';
+        _data.action = 'search';
+        _data.namekeyword = _key;
+    }
+    console.log(_data);
+    $.ajax({
+        url: _url,
+        data: _data,
+        type: _type,
+        dataType: 'json',
+        success: function (result) {
+            console.log(result);
+            if (_start == 1) {
+                //第1次设置IP地址信息
+                _list = result.iplist;
+                for(var i=0, l=_list1.length; i<l; i++){
+                    $('.plug_list').append('<li>' +
+                        '<input type="checkbox" name="target_ip_id[]" value="' + _list1[i].pocid + '" lay-skin="primary" title="'+_list1[i].pocname+'" lay-filter="itemChoose">' + '</li>');
+                }
+                form_render();
+                _start = 0;
+            }
+            _record_count = result.real_count;
+            _list = result.lists;
+            $('#content').html('');
+            for(i=0; i<_list.length; i++) {
+                _row = _list[i];
+                $('#content').append('<tr class="data_' + _row['baoid'] + '">\n' +
+                    '                                <td>\n' +
+                    '                                    <input type="checkbox" name="ids[]" value="' + _row['baoid'] + '" lay-skin="primary" lay-filter="itemChoose">\n' +
+                    '                                </td>\n' +
+                    '                                <td>' + _row['bao_name'] + '</td>\n' +
+                    '                                <td>' + _row['bao_info'] + '</td>\n' +
+                    '                                <td>' + _row['username'] + '</td>\n' +
+                    '                                <td>\n' +
+                    '                                    <a href="javascript:;" onclick="edit(\'' + _row['baoid'] + '\')" class="lk_ico edit"></a>\n' +
+                    '                                </td>\n' +
+                    '                            </tr>');
+            }
+
+            $('.fz').html('共' + _record_count + '条记录');
+            _maxpage = Math.ceil(_record_count / _pagesize);
+            $(".pages").createPage({
+                pageNum: _maxpage,
+                current: _page,
+                backfun: function(e) {
+                    console.log(e);//回调
+                    to_find(e.current);
+                }
+            });
+            form_render();
+        }
+    })
+}
+
+//增加项目组
+function add_save() {
+    _baoname = $('#baoname_add').val();
+    if (!_baoname) {
+        showmsg('请输入爆破组名称');
+        return false;
+    }
+    var _obj = $('.pop_bpW .plug_list').find(':checkbox');
+    var ids = {}, sel = 0;
+    for (i=0; i<_obj.length; i++) {
+        if ($(_obj[i]).attr('checked')) {
+            ids[sel++] = $(_obj[i]).val();
+        }
+    }
+    if (!sel) {
+        showmsg('请选择IP地址信息');
+        return false;
+    }
+    _data = {baoname: _baoname, baoinfo: ids, action: 'add'};
+    console.log(_data);
+    $.post(_url, _data, function (result, status) {
+        showmsg(res.msg, 0);
+        if (res.status == 200) {
+            setTimeout("location.reload()",1500);
+        }
+    })
+}
+
+//编辑
+function edit(_baoid) {
+    _edit_id = _baoid;
+    var _obj = $('.data_' + _edit_id);
+    $('#baoname_edit').val($(_obj).find('td:eq(1)').html() );
+
+
+    $('.pop_bg').show();
+    $('.pop_editDkz').show();
+}
+function edit_save() {
+    _baoname = $('#baoname_edit').val();
+    _baoid = _edit_id;
+    if (!_baoname) {
+        showmsg('请输入爆破组名称');
+        return false;
+    }
+    var _obj = $('.pop_bpW .plug_list').find(':checkbox');
+    var ids = {}, sel = 0;
+    for (i=0; i<_obj.length; i++) {
+        if ($(_obj[i]).attr('checked')) {
+            ids[sel++] = $(_obj[i]).val();
+        }
+    }
+    if (!sel) {
+        showmsg('请选择IP地址信息');
+        return false;
+    }
+    _data = {baoname: _baoname, baoinfo: ids, baoid: _baoid, action: 'editor'};
+    console.log(_data);
+    $.post(_url, _data, function (res, status) {
+        showmsg(res.msg, 0);
+        if (res.status == 200) {
+            setTimeout("location.reload()",1500);
+        }
+    })
+}
+$(function(){
+    to_find(1);
+    $('.find_key').bind('keyup', function(event) {
+        if (event.keyCode == "13") {
+            to_find(1);
+        }
+    })
+})
+</script>
+</body>
+</html>

@@ -1,0 +1,468 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="layui/css/layui.css">
+<link rel="stylesheet" href="css/style.css">
+<title>模板-brute POC组管理</title>
+<style>
+    .labelTxt{
+        font-size: 14px;
+        color: #fff;
+        margin-right: 12px;
+        margin-top:10px;
+    }
+</style>
+</head>
+
+<body class="layui-layout-body">
+<div class="layui-layout layui-layout-admin">
+    <div class="layui-header">
+    </div>
+
+    <div class="layui-side">
+        <div class="layui-side-scroll">
+        </div>
+    </div>
+    <div class="layui-body">
+        <div class="container layui-form">
+            <div class="pub_tit">
+                <span class="tit">brute POC组管理</span>
+            </div>
+            <div class="user_main">
+                <div class="pub_topbar clearfix">
+                    <div class="pub_search fl">
+                        <input type="text" class="ipt ipt_txt find_key" id="find_key" placeholder="输入POC组id进行搜索" />
+                    </div>
+                    <button class="btn fr mt8 addDkz" onclick="addnew()">添加</button>
+                    <form id="uploadForm" enctype="multipart/form-data" method="POST">
+                        <span class="labelTxt" style="float: left;">上传脚本文件:</span>
+                        <input type="file" name="photo" id="file" value="" style="float: left;width: 328px;line-height: 28px;margin-top: 8px;">
+                        <span class="labelTxt" style="float: left;">上传字典文件:</span>
+                        <input type="file" name="dictionaries" id="dictionaries" value="" style="float: left;width: 328px;line-height: 28px;margin-top: 8px;">
+                        <input type="button" class="btn fr mt8" onclick="postData_dictionaries();" value="上传字典文件" name="" style="margin-right: 10px">
+                        <input type="button" class="btn fr mt8" onclick="postData();" value="上传脚本文件" name="" style="margin-right: 10px">
+                        <div id="output" style="display: none"></div>
+                    </form>
+                </div>
+                <div class="pub_tablew">
+                    <table class="pub_table" id="tab">
+                        <thead>
+                            <!-- <th>
+                                <input type="checkbox" name="" lay-skin="primary" lay-filter="allChoose">
+                            </th> -->
+                            <th>ID</th>
+                            <th>POC组名称</th>
+                            <th>创建时间</th>
+                            <th>备注</th>
+                            <th>字典文件名</th>
+                            <th>脚本文件名</th>
+                            <th>操作</th>
+                        </thead>
+                        <tbody id="content">
+                        </tbody>
+                    </table>
+                </div>
+                <div class="pagelist">
+                    <span class="fz"></span>
+                    <div class="pages fr">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+<!--添加端口组-->
+<div class="pop_bg"></div>
+<div class="pop pop_bp layui-form pop_bpDkz">
+    <h6 class="p_tit">添加端口组 <em class="close fr"></em></h6>
+    <div class="detail">
+        <div class="item">
+            <span class="tit">标签名</span>
+            <div class="info">
+                <input type="text" class="ipt ipt_txt" id="portname_add" placeholder="请输入export_poc标签名"/>
+            </div>
+        </div>
+        <div class="item">
+            <span class="tit">备注</span>
+            <div class="info">
+                <input type="text" class="ipt ipt_txt" id="portPorts_add" placeholder="请输入备注信息"/>
+            </div>
+        </div>
+        <div class="item">
+            <span class="tit">脚本文件名</span>
+            <div class="info l_info">
+                <input type="text" class="ipt ipt_txt" id="ports_file_daa" disabled="disabled" placeholder="请输入export_poc脚本文件名"/>
+            </div>
+        </div>
+        <div class="item">
+            <span class="tit">字典文件名</span>
+            <div class="info l_info">
+                <input type="text" class="ipt ipt_txt" id="ports_file_Dictionary" disabled="disabled" placeholder="请输入字典文件名"/>
+            </div>
+        </div>
+        <button class="button" onclick="add_save()">确定添加</button>
+    </div>
+    <i class="z_ico z1"></i>
+    <i class="z_ico z2"></i>
+    <i class="z_ico z3"></i>
+    <i class="z_ico z4"></i>
+</div>
+
+<div class="pop pop_bp layui-form pop_editDkz">
+    <h6 class="p_tit">修改brute poc组 <em class="close fr"></em></h6>
+    <div class="detail">
+        <div class="item">
+            <span class="tit">brute组id</span>
+            <div class="info">
+                <input type="text" class="ipt ipt_txt" id="label_id" placeholder="输入brute poc组id"/>
+            </div>
+        </div>
+        <div class="item">
+            <span class="tit">brute组名称</span>
+            <div class="info">
+                <input type="text" class="ipt ipt_txt" id="label_name_edit" placeholder="输入brute poc组名称"/>
+            </div>
+        </div>
+        <div class="item">
+            <span class="tit">brute poc备注</span>
+            <div class="info">
+                <input type="text" class="ipt ipt_txt" id="label_name_beizhu" placeholder="brute poc备注"/>
+            </div>
+        </div>
+        <div class="item">
+            <span class="tit">脚本文件名</span>
+            <div class="info">
+                <input type="text" class="ipt ipt_txt" id="ports_edit" placeholder="poc脚本文件名"/>
+            </div>
+        </div>
+        <div class="item">
+            <span class="tit">字典文件名</span>
+            <div class="info l_info">
+                <input type="text" class="ipt ipt_txt" id="ports_file_edit_dictionaries" disabled="disabled" placeholder="输入poc创建时间"/>
+                <!--<textarea name="" class="ipt textarea" id="ports_file_edit" placeholder="输入poc组文件内容"></textarea>-->
+            </div>
+        </div>
+        <button class="button" onclick="edit_save()">确定修改</button>
+    </div>
+    <i class="z_ico z1"></i>
+    <i class="z_ico z2"></i>
+    <i class="z_ico z3"></i>
+    <i class="z_ico z4"></i>
+</div>
+
+<div class="pop pop_bp layui-form confirmDel" style="height: 200px;width: 300px;margin: -100px 0 0 -150px;position: fixed; left: 50%; top: 50%;">
+    <h6 class="p_tit">是否删除 <em class="close fr"></em></h6>
+    <div class="detail">
+        <button class="button" style="float: left" id="confirm">确认</button>
+        <button class="button" style="float: right" onclick="cancel()">取消</button>
+    </div>
+    <i class="z_ico z1"></i>
+    <i class="z_ico z2"></i>
+    <i class="z_ico z3"></i>
+    <i class="z_ico z4"></i>
+</div>
+
+
+<script src="js/jquery-1.8.3.min.js"></script>
+<script src="layui/layui.js"></script>
+<script src="js/common.js" charset="utf-8"></script>
+<script src="js/zxf_page.js" charset="utf-8"></script>
+<script>
+    layui.use(['form', 'upload', 'laydate'], function(){
+        var form = layui.form
+            ,layer = layui.layer
+            ,layedit = layui.layedit
+            ,laydate = layui.laydate
+            ,upload = layui.upload;
+
+        form.on('checkbox(allChoose)', function(data){
+            var child = $(data.elem).parents('table').find('tbody input[type="checkbox"]');
+            child.each(function(index, item){
+                item.checked = data.elem.checked;
+            });
+            form.render('checkbox');
+        });
+        form.on('checkbox(itemChoose)',function(data){
+            var sib = $(data.elem).parents('table').find('tbody input[type="checkbox"]:checked').length;
+            var total = $(data.elem).parents('table').find('tbody input[type="checkbox"]').length;
+            if(sib == total){
+                $(data.elem).parents('table').find('thead input[type="checkbox"]').prop("checked",true);
+                form.render();
+            }else{
+                $(data.elem).parents('table').find('thead input[type="checkbox"]').prop("checked",false);
+                form.render();
+            }
+        });
+
+    });
+$("#file").on('change',function () {
+    var file=document.getElementById("file").files[0];
+    var reader=new FileReader();
+    reader.readAsText(file);
+    reader.onload = function() {
+        if(reader.result) {
+            //显示文件内容
+            $("#output").html(reader.result);
+        }
+    };
+});
+$("#dictionaries").on('change',function () {
+    var file=document.getElementById("dictionaries").files[0];
+    var reader=new FileReader();
+    reader.readAsText(file);
+    reader.onload = function() {
+        if(reader.result) {
+            //显示文件内容
+            // $("#output").html(reader.result);
+        }
+    };
+});
+function  postData_dictionaries(){
+    var formData = new FormData();
+    formData.append("upload_type",'dict');
+    formData.append("upload",$('#dictionaries')[0].files[0]);
+    console.log($('#dictionaries')[0].files[0])
+    $.ajax({
+        url:site_url + '/upload', /*接口域名地址*/
+        type:'post',
+        data: formData,
+        // async: true,
+        // cache: false,
+        contentType: false,
+        processData: false,
+        secureuri: false,
+        headers: {
+            Accept: "application/json"
+        },
+        success:function(data){
+            console.log(data)
+            var obj = JSON.parse(data);
+            $("#ports_file_Dictionary").val(obj.info.filename);
+        }
+    })
+}
+function postData(){
+    var formData = new FormData();
+    formData.append("upload_type",'brute_poc');
+    formData.append("upload",$('#file')[0].files[0]);
+    console.log($('#file')[0].files[0])
+    $.ajax({
+        url:site_url + '/upload', /*接口域名地址*/
+        type:'post',
+        data: formData,
+        // async: true,
+        // cache: false,
+        contentType: false,
+        processData: false,
+        secureuri: false,
+        headers: {
+            Accept: "application/json"
+        },
+        success:function(data){
+            console.log(data)
+            var obj = JSON.parse(data);
+            $("#ports_file_daa").val(obj.info.filename);
+        }
+    })
+}
+function to_find(_page) {
+    var _data = {id: _page};
+    _type = 'post';
+    $.ajax({
+        url: site_url + '/policy/brute_poc?action=show',
+        data: JSON.stringify(_data),
+        type: _type,
+        dataType: 'json',
+        processData: false,
+        contentType: 'application/json;charset=utf-8',
+        success: function (result) {
+            if(result.status === "success"){
+                // _record_count = result.info.data.length;
+                var _list = result.info.data;
+                console.log(_list)
+                $('#content').html('');
+                var exploit_poc_html=""
+                if(_page == undefined  || _page == ''){
+                    for(i=0; i<_list.length; i++) {
+                        _row = _list[i];
+                        var times = new Date(parseInt(_list[i].create_time) * 1000).toLocaleString().replace(/:\d{1,2}$/,' ');
+                        exploit_poc_html+='<tr class="data_' + _row['id'] + '">'
+                        exploit_poc_html+=' <td>' + _row['id'] + '</td>'
+                        exploit_poc_html+= '<td>' + _row['label_name'] + '</td>'
+                        exploit_poc_html+='<td>' + times + '</td>'
+                        exploit_poc_html+= '<td>' + _row['other_info'] + '</td>'
+                        exploit_poc_html+= '<td>' + _row['_dict'] + '</td>'
+                        exploit_poc_html+= '<td>' + _row['script'] + '</td>'
+                        exploit_poc_html+='<td>'
+                        exploit_poc_html+=' <a href="javascript:;" onclick="edit(\'' + _row['id'] + '\')" class="lk_ico edit"></a>'
+                        exploit_poc_html+='<a href="javascript:;" onclick="del(\'' + _row['id'] + '\')" class="lk_ico del"></a>'
+                        exploit_poc_html+=' </td>'
+                        exploit_poc_html+='</tr>'
+                    }
+                    $("#content").html(exploit_poc_html)
+                    form_render();
+                }else{
+                    var times = new Date(parseInt(_list.create_time) * 1000).toLocaleString().replace(/:\d{1,2}$/,' ');
+                    exploit_poc_html+='<tr class="data_' + _list.id + '">'
+                    exploit_poc_html+=' <td>' + _list.id + '</td>'
+                    exploit_poc_html+= '<td>' +  _list.label_name + '</td>'
+                    exploit_poc_html+='<td>' + times + '</td>'
+                    exploit_poc_html+= '<td>' + _list.other_info + '</td>'
+                    exploit_poc_html+= '<td>' + _list._dict + '</td>'
+                    exploit_poc_html+= '<td>' + _list.script + '</td>'
+                    exploit_poc_html+='<td>'
+                    exploit_poc_html+=' <a href="javascript:;" onclick="edit(\'' +_list.id + '\')" class="lk_ico edit"></a>'
+                    exploit_poc_html+='<a href="javascript:;" onclick="del(\'' +_list.id + '\')" class="lk_ico del"></a>'
+                    exploit_poc_html+=' </td>'
+                    exploit_poc_html+='</tr>'
+                    $("#content").html(exploit_poc_html)
+                    form_render();
+                }
+            }else{
+                // showmsg('您查的id不存在');
+            }
+            
+        },
+        error:function(){
+
+        }
+    })
+    return _page
+}
+//添加属于新增，新增前弹出框内容应该为空
+function addnew() {
+    $('#portname_add').val('');
+    $('#portPorts_add').val('');
+    // if($("#file").val() != ''){
+    //     $("#portPorts_add").attr("disabled", true );
+    // }else{
+    //     $('#ports_file_daa').val('')
+    //     $("#portPorts_add").attr("disabled", false );
+    // }
+
+}
+//添加判断
+// if($("#ports_file_daa").val() != ''){
+//     $("#portPorts_add").attr("disabled", true );
+// }else{
+//     $("#portPorts_add").attr("disabled", false );
+// }
+if($("#ports_file_edit").val() != ''){
+    $("#ports_edit").attr("disabled", true );
+}else{
+    $("#ports_edit").attr("disabled", false );
+}
+//增加poc组
+function add_save() {
+    var _portname = $('#portname_add').val();
+    _portPorts = $('#portPorts_add').val();
+    _portfile = $('#ports_file_daa').val();
+    _ports_file_Dictionary = $("#ports_file_Dictionary").val()
+    if (!_portname) {
+        showmsg('请输入brute poc标签名');
+        return false;
+    }
+    var _data = {label_name: _portname, other_info: _portPorts, _dict: _ports_file_Dictionary,script:_portfile};
+    $.ajax({
+        url:site_url + '/policy/brute_poc?action=add',
+        data:JSON.stringify(_data),
+        type:'post',
+        dataType: 'json',
+        processData: false,
+        contentType: 'application/json;charset=utf-8',
+        success: function(data){
+            console.log(data)
+            $('.pop').hide();
+            $('.pop_bg').hide();
+            to_find();
+        },
+        error:function(){
+            $('.pop').hide();
+            $('.pop_bg').css('display','none')
+        }
+    })
+}
+
+//编辑
+function edit(id) {
+    var _obj = $('.data_' + id);
+    $('#label_id').val(id);
+    $('#label_name_edit').val($(_obj).find('td:eq(1)').html() );
+    $("#label_name_beizhu").val($(_obj).find('td:eq(3)').html() );
+    $('#ports_edit').val($(_obj).find('td:eq(5)').html() );
+    $('#ports_file_edit_dictionaries').val($(_obj).find('td:eq(4)').html() );
+    $('.pop_bg').show();
+    $('.pop_editDkz').show();
+}
+function edit_save() {
+    _label_id = $('#label_id').val();
+    _label_name_edit = $('#label_name_edit').val();
+    _ports_edit = $('#ports_edit').val();
+    _ports_file_edit = $('#ports_file_edit').val();
+    _ports_file_bz = $("#label_name_beizhu").val();
+    _ports_file_edit_dictionaries = $("#ports_file_edit_dictionaries").val();
+    _data = {id: _label_id, label_name: _label_name_edit, script: _ports_edit, other_info: _ports_file_bz,_dict:_ports_file_edit_dictionaries};
+    $.ajax({
+        url:site_url + '/policy/brute_poc?action=update',
+        data:JSON.stringify(_data),
+        type:'post',
+        dataType: 'json',
+        processData: false,
+        contentType: 'application/json;charset=utf-8',
+        success: function(res){
+            console.log(res)
+            to_find();
+            $('.pop').hide();
+            $('.pop_bg').hide();
+        },
+    })
+}
+
+/**
+ *
+ * 删除按钮
+ *
+ */
+function del(obj){
+    $('.pop_bg').show();
+    $('.confirmDel').show();
+    //确认删除
+    var _data = {id:obj};
+    $('#confirm').on('click',function () {
+        $.ajax({
+            url:site_url + '/policy/brute_poc?action=rm',
+            data:JSON.stringify(_data),
+            type:'post',
+            dataType: 'json',
+            processData: false,
+            contentType: 'application/json;charset=utf-8',
+            success: function(data){
+                console.log(data)
+                to_find();
+                $('.pop').hide();
+                $('.pop_bg').hide();
+            },
+        });
+    });
+}
+//取消按钮
+function cancel(){
+    $('.pop_bg').hide();
+    $('.confirmDel').hide();
+}
+$(function(){
+    to_find();
+    //监听输入框输入并进行搜索
+    $("#find_key").on("input",function(e){
+        var _key = $('#find_key').val();
+        to_find(_key);
+    });
+})
+</script>
+</body>
+</html>
